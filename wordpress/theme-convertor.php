@@ -1,13 +1,15 @@
 <?php
 /**
- * Westpace Material Theme Converter
+ * Westpace Material Theme Converter - Fixed Version
  * 
  * This script converts the basic apparel-ecommerce-store theme into
  * the enhanced westpace-material theme with improved styling, navigation,
  * ecommerce functionality, and Material Design principles.
  * 
- * Usage: php theme-converter.php
- * Or run via web browser if placed in WordPress directory
+ * Usage: 
+ * 1. Place in WordPress root directory
+ * 2. Run via CLI: php theme-converter.php
+ * 3. Or access via browser: yoursite.com/theme-converter.php
  */
 
 class WestpaceMaterialConverter {
@@ -16,59 +18,139 @@ class WestpaceMaterialConverter {
     private $target_theme = 'westpace-material';
     private $wp_content_path;
     private $themes_path;
+    private $is_wordpress_loaded = false;
     
     public function __construct() {
+        // Check if WordPress is loaded
+        $this->is_wordpress_loaded = defined('ABSPATH');
+        
         // Detect if running in WordPress environment
-        if (defined('ABSPATH')) {
+        if ($this->is_wordpress_loaded) {
             $this->wp_content_path = WP_CONTENT_DIR;
         } else {
-            // Assume script is in WordPress root or adjust path accordingly
-            $this->wp_content_path = __DIR__ . '/wp-content';
+            // Try to detect WordPress directory structure
+            $possible_paths = [
+                __DIR__ . '/wp-content',
+                __DIR__ . '/../wp-content',
+                dirname(__DIR__) . '/wp-content',
+                getcwd() . '/wp-content'
+            ];
+            
+            foreach ($possible_paths as $path) {
+                if (is_dir($path)) {
+                    $this->wp_content_path = $path;
+                    break;
+                }
+            }
+            
+            // If still not found, create relative to script location
+            if (empty($this->wp_content_path)) {
+                $this->wp_content_path = __DIR__ . '/wp-content';
+            }
         }
+        
         $this->themes_path = $this->wp_content_path . '/themes';
+        
+        // Ensure themes directory exists
+        if (!is_dir($this->themes_path)) {
+            mkdir($this->themes_path, 0755, true);
+        }
+    }
+    
+    /**
+     * Check if user has permission (WordPress context only)
+     */
+    private function hasPermission() {
+        if (!$this->is_wordpress_loaded) {
+            return true; // Allow execution outside WordPress
+        }
+        
+        return function_exists('current_user_can') && current_user_can('manage_options');
     }
     
     /**
      * Main conversion process
      */
     public function convert() {
-        echo "🚀 Starting Westpace Material Theme Conversion...\n";
+        $this->output("🚀 Starting Westpace Material Theme Conversion...\n");
         
-        // Step 1: Backup existing theme
-        $this->backupTheme();
+        // Check permissions
+        if ($this->is_wordpress_loaded && !$this->hasPermission()) {
+            $this->output("❌ Error: Insufficient permissions. Admin access required.\n");
+            return false;
+        }
         
-        // Step 2: Create enhanced theme structure
-        $this->createThemeStructure();
+        // Verify paths exist
+        if (!is_dir($this->themes_path)) {
+            $this->output("❌ Error: Themes directory not found: {$this->themes_path}\n");
+            return false;
+        }
         
-        // Step 3: Generate enhanced functions.php
-        $this->createEnhancedFunctions();
-        
-        // Step 4: Create Material Design CSS
-        $this->createMaterialCSS();
-        
-        // Step 5: Create enhanced JavaScript
-        $this->createEnhancedJavaScript();
-        
-        // Step 6: Create WooCommerce templates
-        $this->createWooCommerceTemplates();
-        
-        // Step 7: Create enhanced header
-        $this->createEnhancedHeader();
-        
-        // Step 8: Create enhanced footer
-        $this->createEnhancedFooter();
-        
-        // Step 9: Create enhanced navigation
-        $this->createEnhancedNavigation();
-        
-        // Step 10: Create template files
-        $this->createTemplateFiles();
-        
-        // Step 11: Create enhanced front page
-        $this->createEnhancedFrontPage();
-        
-        echo "✅ Westpace Material Theme Conversion Complete!\n";
-        echo "📁 Theme location: {$this->themes_path}/{$this->target_theme}\n";
+        try {
+            // Step 1: Backup existing theme
+            $this->backupTheme();
+            
+            // Step 2: Create enhanced theme structure
+            $this->createThemeStructure();
+            
+            // Step 3: Create main style.css
+            $this->createStyleCSS();
+            
+            // Step 4: Generate enhanced functions.php
+            $this->createEnhancedFunctions();
+            
+            // Step 5: Create Material Design CSS
+            $this->createMaterialCSS();
+            
+            // Step 6: Create enhanced JavaScript
+            $this->createEnhancedJavaScript();
+            
+            // Step 7: Create WooCommerce templates
+            $this->createWooCommerceTemplates();
+            
+            // Step 8: Create enhanced header
+            $this->createEnhancedHeader();
+            
+            // Step 9: Create enhanced footer
+            $this->createEnhancedFooter();
+            
+            // Step 10: Create enhanced navigation
+            $this->createEnhancedNavigation();
+            
+            // Step 11: Create template files
+            $this->createTemplateFiles();
+            
+            // Step 12: Create enhanced front page
+            $this->createEnhancedFrontPage();
+            
+            // Step 13: Create additional theme files
+            $this->createAdditionalFiles();
+            
+            $this->output("✅ Westpace Material Theme Conversion Complete!\n");
+            $this->output("📁 Theme location: {$this->themes_path}/{$this->target_theme}\n");
+            $this->output("🎯 Next steps:\n");
+            $this->output("   1. Go to WordPress Admin > Appearance > Themes\n");
+            $this->output("   2. Activate 'Westpace Material Design Enhanced'\n");
+            $this->output("   3. Customize theme via Appearance > Customize\n");
+            
+            return true;
+            
+        } catch (Exception $e) {
+            $this->output("❌ Error during conversion: " . $e->getMessage() . "\n");
+            return false;
+        }
+    }
+    
+    /**
+     * Output method that works in both CLI and web contexts
+     */
+    private function output($message) {
+        if (php_sapi_name() === 'cli') {
+            echo $message;
+        } else {
+            echo nl2br(htmlspecialchars($message));
+            flush();
+        }
     }
     
     /**
@@ -77,7 +159,7 @@ class WestpaceMaterialConverter {
     private function backupTheme() {
         $backup_path = $this->themes_path . "/{$this->target_theme}-backup-" . date('Y-m-d-H-i-s');
         if (is_dir($this->themes_path . "/{$this->target_theme}")) {
-            echo "📦 Backing up existing theme to: $backup_path\n";
+            $this->output("📦 Backing up existing theme to: $backup_path\n");
             $this->copyDirectory($this->themes_path . "/{$this->target_theme}", $backup_path);
         }
     }
@@ -86,7 +168,7 @@ class WestpaceMaterialConverter {
      * Create enhanced theme directory structure
      */
     private function createThemeStructure() {
-        echo "📁 Creating enhanced theme structure...\n";
+        $this->output("📁 Creating enhanced theme structure...\n");
         
         $directories = [
             $this->target_theme,
@@ -110,10 +192,280 @@ class WestpaceMaterialConverter {
     }
     
     /**
+     * Create style.css with theme information
+     */
+    private function createStyleCSS() {
+        $this->output("💄 Creating main style.css...\n");
+        
+        $style_content = '/*
+Theme Name: Westpace Material Design Enhanced
+Description: Enhanced Material Design WordPress theme for West Pace Apparels with advanced WooCommerce integration, converted from apparel-ecommerce-store theme
+Version: 2.1.0
+Author: West Pace Development Team
+Text Domain: westpace-material
+Tags: material-design, ecommerce, woocommerce, business, manufacturing, modern, responsive, accessibility-ready
+Requires at least: 5.9
+Tested up to: 6.4
+Requires PHP: 7.4
+License: GPL v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
+Enhanced version with Material Design principles, improved navigation,
+advanced WooCommerce features, and optimized performance.
+*/
+
+/* Import Material Design CSS */
+@import url("assets/css/material-design.css");
+
+/* Theme-specific overrides and enhancements */
+.site {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.site-content {
+    flex: 1;
+}
+
+/* Enhanced Hero Section */
+.hero-section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 50%, var(--accent-color) 100%);
+    color: white;
+    overflow: hidden;
+}
+
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("assets/images/hero-bg.jpg") center/cover;
+    opacity: 0.1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero-title {
+    font-size: clamp(3rem, 8vw, 5rem);
+    font-weight: 900;
+    margin-bottom: var(--spacing-md);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.hero-subtitle {
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    font-weight: 300;
+    margin-bottom: var(--spacing-lg);
+    opacity: 0.9;
+}
+
+.hero-description {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    margin-bottom: var(--spacing-xl);
+    opacity: 0.8;
+}
+
+.hero-actions {
+    display: flex;
+    gap: var(--spacing-lg);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Enhanced Services Section */
+.services-section {
+    padding: var(--spacing-xxl) 0;
+    background: white;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-xl);
+}
+
+.service-card {
+    text-align: center;
+    padding: var(--spacing-xl);
+    transition: transform var(--transition-normal);
+}
+
+.service-card:hover {
+    transform: translateY(-8px);
+}
+
+.service-icon {
+    font-size: 4rem;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-lg);
+}
+
+/* About Section */
+.about-section {
+    padding: var(--spacing-xxl) 0;
+    background: var(--background-color);
+}
+
+.about-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xxl);
+    align-items: center;
+}
+
+.about-text h2 {
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-lg);
+}
+
+.about-text p {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    margin-bottom: var(--spacing-lg);
+    color: var(--text-secondary);
+}
+
+.about-image img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-lg);
+}
+
+/* Section Titles */
+.section-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+    position: relative;
+}
+
+.section-title::after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: var(--secondary-color);
+    margin: var(--spacing-md) auto 0;
+    border-radius: 2px;
+}
+
+/* Posts Grid */
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+.post-card {
+    overflow: hidden;
+    transition: transform var(--transition-normal);
+}
+
+.post-card:hover {
+    transform: translateY(-4px);
+}
+
+.post-thumbnail img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.post-content {
+    padding: var(--spacing-lg);
+}
+
+.post-title a {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.post-title a:hover {
+    color: var(--primary-color);
+}
+
+.post-meta {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: var(--spacing-md);
+}
+
+.post-meta span:not(:last-child)::after {
+    content: " • ";
+    margin: 0 var(--spacing-sm);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .about-content {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-xl);
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .services-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+    
+    .header-container {
+        padding: 0 var(--spacing-md);
+    }
+    
+    .posts-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-section {
+        min-height: 80vh;
+        padding: var(--spacing-xl) 0;
+    }
+    
+    .material-button {
+        width: 100%;
+        max-width: 280px;
+    }
+    
+    .service-card {
+        padding: var(--spacing-lg);
+    }
+}';
+        
+        file_put_contents($this->themes_path . "/{$this->target_theme}/style.css", $style_content);
+    }
+    
+    /**
      * Create enhanced functions.php
      */
     private function createEnhancedFunctions() {
-        echo "⚙️ Creating enhanced functions.php...\n";
+        $this->output("⚙️ Creating enhanced functions.php...\n");
         
         $functions_content = '<?php
 if (!defined(\'ABSPATH\')) exit;
@@ -259,8 +611,18 @@ function westpace_excerpt_more($more) { return \'...\'; }
 add_filter(\'excerpt_more\', \'westpace_excerpt_more\');
 
 // Include additional theme files
-require get_template_directory() . \'/inc/customizer.php\';
-require get_template_directory() . \'/inc/template-functions.php\';
+$inc_files = [
+    \'customizer.php\',
+    \'template-functions.php\',
+    \'class-walker-nav-menu.php\'
+];
+
+foreach ($inc_files as $file) {
+    $file_path = get_template_directory() . \'/inc/\' . $file;
+    if (file_exists($file_path)) {
+        require $file_path;
+    }
+}
 ';
         
         file_put_contents($this->themes_path . "/{$this->target_theme}/functions.php", $functions_content);
@@ -270,7 +632,7 @@ require get_template_directory() . \'/inc/template-functions.php\';
      * Create Material Design CSS
      */
     private function createMaterialCSS() {
-        echo "🎨 Creating Material Design CSS...\n";
+        $this->output("🎨 Creating Material Design CSS...\n");
         
         $css_content = ':root {
   /* Material Design Color Palette */
@@ -558,10 +920,7 @@ h6 { font-size: 1rem; }
   margin-top: auto;
 }
 
-.footer-widgets {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 var(--spacing-lg);
+.footer-widgets-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: var(--spacing-xl);
@@ -591,6 +950,42 @@ h6 { font-size: 1rem; }
 
 .footer-widget a:hover {
   color: white;
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: var(--spacing-lg);
+}
+
+.footer-bottom-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-lg);
+}
+
+.footer-social {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  color: white;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.social-link:hover {
+  background: var(--secondary-color);
+  transform: translateY(-2px);
 }
 
 /* Utility Classes */
@@ -657,7 +1052,7 @@ h6 { font-size: 1rem; }
      * Create enhanced JavaScript
      */
     private function createEnhancedJavaScript() {
-        echo "⚡ Creating enhanced JavaScript...\n";
+        $this->output("⚡ Creating enhanced JavaScript...\n");
         
         $js_content = '/**
  * Westpace Material Theme JavaScript
@@ -1000,7 +1395,7 @@ document.head.appendChild(style);';
      * Create WooCommerce templates
      */
     private function createWooCommerceTemplates() {
-        echo "🛒 Creating enhanced WooCommerce templates...\n";
+        $this->output("🛒 Creating enhanced WooCommerce templates...\n");
         
         // Enhanced WooCommerce CSS
         $woocommerce_css = '/**
@@ -1230,65 +1625,6 @@ document.head.appendChild(style);';
     background: #e65100;
 }
 
-/* Product Categories */
-.woocommerce .woocommerce-result-count {
-    color: var(--text-secondary);
-    margin-bottom: var(--spacing-lg);
-}
-
-.woocommerce .woocommerce-ordering {
-    margin-bottom: var(--spacing-lg);
-}
-
-.woocommerce .woocommerce-ordering select {
-    padding: var(--spacing-md);
-    border: 2px solid #e0e0e0;
-    border-radius: var(--radius-md);
-    background: white;
-}
-
-/* Breadcrumbs */
-.woocommerce .woocommerce-breadcrumb {
-    background: var(--surface-color);
-    padding: var(--spacing-lg);
-    border-radius: var(--radius-md);
-    margin-bottom: var(--spacing-lg);
-    box-shadow: var(--shadow-1);
-}
-
-.woocommerce .woocommerce-breadcrumb a {
-    color: var(--primary-color);
-    text-decoration: none;
-}
-
-.woocommerce .woocommerce-breadcrumb a:hover {
-    text-decoration: underline;
-}
-
-/* Messages */
-.woocommerce-message,
-.woocommerce-error,
-.woocommerce-info {
-    background: var(--surface-color);
-    border-radius: var(--radius-md);
-    padding: var(--spacing-lg);
-    margin-bottom: var(--spacing-lg);
-    box-shadow: var(--shadow-2);
-    border-left: 4px solid;
-}
-
-.woocommerce-message {
-    border-left-color: var(--success-color);
-}
-
-.woocommerce-error {
-    border-left-color: var(--error-color);
-}
-
-.woocommerce-info {
-    border-left-color: var(--info-color);
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
     .woocommerce ul.products {
@@ -1310,60 +1646,13 @@ document.head.appendChild(style);';
 }';
         
         file_put_contents($this->themes_path . "/{$this->target_theme}/assets/css/woocommerce.css", $woocommerce_css);
-        
-        // Create WooCommerce template files
-        $woocommerce_templates = [
-            'archive-product.php' => '<?php get_header(); ?>
-<main class="site-main woocommerce-page">
-    <div class="container">
-        <div class="woocommerce-breadcrumb-wrapper">
-            <?php woocommerce_breadcrumb(); ?>
-        </div>
-        <?php woocommerce_content(); ?>
-    </div>
-</main>
-<?php get_footer(); ?>',
-            
-            'single-product.php' => '<?php get_header(); ?>
-<main class="site-main woocommerce-page single-product-page">
-    <div class="container">
-        <div class="woocommerce-breadcrumb-wrapper">
-            <?php woocommerce_breadcrumb(); ?>
-        </div>
-        <?php woocommerce_content(); ?>
-    </div>
-</main>
-<?php get_footer(); ?>',
-            
-            'cart.php' => '<?php get_header(); ?>
-<main class="site-main woocommerce-page cart-page">
-    <div class="container">
-        <h1 class="page-title"><?php esc_html_e("Shopping Cart", "westpace-material"); ?></h1>
-        <?php woocommerce_content(); ?>
-    </div>
-</main>
-<?php get_footer(); ?>',
-            
-            'checkout.php' => '<?php get_header(); ?>
-<main class="site-main woocommerce-page checkout-page">
-    <div class="container">
-        <h1 class="page-title"><?php esc_html_e("Checkout", "westpace-material"); ?></h1>
-        <?php woocommerce_content(); ?>
-    </div>
-</main>
-<?php get_footer(); ?>'
-        ];
-        
-        foreach ($woocommerce_templates as $filename => $content) {
-            file_put_contents($this->themes_path . "/{$this->target_theme}/woocommerce/$filename", $content);
-        }
     }
     
     /**
      * Create enhanced header
      */
     private function createEnhancedHeader() {
-        echo "🔝 Creating enhanced header...\n";
+        $this->output("🔝 Creating enhanced header...\n");
         
         $header_content = '<!DOCTYPE html>
 <html <?php language_attributes(); ?>>
@@ -1389,7 +1678,7 @@ document.head.appendChild(style);';
                     </div>
                 <?php else : ?>
                     <h1 class="site-title">
-                        <a href="<?php echo esc_url(home_url("/")); ?>" rel="home">
+                        <a href="<?php echo esc_url(home_url("/")); ?>" rel="home" class="site-logo">
                             <?php bloginfo("name"); ?>
                         </a>
                     </h1>
@@ -1431,7 +1720,7 @@ document.head.appendChild(style);';
      * Create enhanced footer
      */
     private function createEnhancedFooter() {
-        echo "🔻 Creating enhanced footer...\n";
+        $this->output("🔻 Creating enhanced footer...\n");
         
         $footer_content = '    </div><!-- #content -->
 
@@ -1463,13 +1752,13 @@ document.head.appendChild(style);';
                             <span class="material-icons">facebook</span>
                         </a>
                         <a href="#" class="social-link" aria-label="Twitter">
-                            <span class="material-icons">twitter</span>
+                            <span class="material-icons">share</span>
                         </a>
                         <a href="#" class="social-link" aria-label="Instagram">
-                            <span class="material-icons">instagram</span>
+                            <span class="material-icons">camera_alt</span>
                         </a>
                         <a href="#" class="social-link" aria-label="LinkedIn">
-                            <span class="material-icons">linkedin</span>
+                            <span class="material-icons">business</span>
                         </a>
                     </div>
                     
@@ -1499,7 +1788,7 @@ document.head.appendChild(style);';
      * Create enhanced navigation
      */
     private function createEnhancedNavigation() {
-        echo "🧭 Creating enhanced navigation...\n";
+        $this->output("🧭 Creating enhanced navigation...\n");
         
         // Create navigation walker for enhanced menu functionality
         $walker_content = '<?php
@@ -1565,7 +1854,7 @@ class Westpace_Walker_Nav_Menu extends Walker_Nav_Menu {
      * Create template files
      */
     private function createTemplateFiles() {
-        echo "📄 Creating template files...\n";
+        $this->output("📄 Creating template files...\n");
         
         $templates = [
             'index.php' => '<?php get_header(); ?>
@@ -1679,7 +1968,7 @@ class Westpace_Walker_Nav_Menu extends Walker_Nav_Menu {
      * Create enhanced front page
      */
     private function createEnhancedFrontPage() {
-        echo "🏠 Creating enhanced front page...\n";
+        $this->output("🏠 Creating enhanced front page...\n");
         
         $frontpage_content = '<?php get_header(); ?>
 
@@ -1778,158 +2067,184 @@ class Westpace_Walker_Nav_Menu extends Walker_Nav_Menu {
     }
     
     /**
-     * Create style.css with theme information
+     * Create additional theme files
      */
-    private function createStyleCSS() {
-        echo "💄 Creating main style.css...\n";
+    private function createAdditionalFiles() {
+        $this->output("📋 Creating additional theme files...\n");
         
-        $style_content = '/*
-Theme Name: Westpace Material Design Enhanced
-Description: Enhanced Material Design WordPress theme for West Pace Apparels with advanced WooCommerce integration, converted from apparel-ecommerce-store theme
-Version: 2.1.0
-Author: West Pace Development Team
-Text Domain: westpace-material
-Tags: material-design, ecommerce, woocommerce, business, manufacturing, modern, responsive, accessibility-ready
-Requires at least: 5.9
-Tested up to: 6.4
-Requires PHP: 7.4
-License: GPL v2 or later
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
+        // Create customizer.php
+        $customizer_content = '<?php
+/**
+ * Westpace Material Theme Customizer
+ */
 
-Enhanced version with Material Design principles, improved navigation,
-advanced WooCommerce features, and optimized performance.
-*/
-
-/* Import Material Design CSS */
-@import url("assets/css/material-design.css");
-
-/* Theme-specific overrides and enhancements */
-.site {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-.site-content {
-    flex: 1;
-}
-
-/* Enhanced Hero Section */
-.hero-section {
-    position: relative;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 50%, var(--accent-color) 100%);
-    color: white;
-    overflow: hidden;
-}
-
-.hero-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url("assets/images/hero-bg.jpg") center/cover;
-    opacity: 0.1;
-}
-
-.hero-content {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.hero-title {
-    font-size: clamp(3rem, 8vw, 5rem);
-    font-weight: 900;
-    margin-bottom: var(--spacing-md);
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-}
-
-.hero-subtitle {
-    font-size: clamp(1.5rem, 4vw, 2rem);
-    font-weight: 300;
-    margin-bottom: var(--spacing-lg);
-    opacity: 0.9;
-}
-
-.hero-description {
-    font-size: 1.25rem;
-    line-height: 1.6;
-    margin-bottom: var(--spacing-xl);
-    opacity: 0.8;
-}
-
-.hero-actions {
-    display: flex;
-    gap: var(--spacing-lg);
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-/* Enhanced Services Section */
-.services-section {
-    padding: var(--spacing-xxl) 0;
-    background: white;
-}
-
-.services-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: var(--spacing-xl);
-    margin-top: var(--spacing-xl);
-}
-
-.service-card {
-    text-align: center;
-    padding: var(--spacing-xl);
-    transition: transform var(--transition-normal);
-}
-
-.service-card:hover {
-    transform: translateY(-8px);
-}
-
-.service-icon {
-    font-size: 4rem;
-    color: var(--primary-color);
-    margin-bottom: var(--spacing-lg);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .hero-actions {
-        flex-direction: column;
-        align-items: center;
-    }
+function westpace_customize_register($wp_customize) {
+    // Add Material Design Color Section
+    $wp_customize->add_section("westpace_colors", array(
+        "title" => __("Material Design Colors", "westpace-material"),
+        "priority" => 30,
+    ));
     
-    .services-grid {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-lg);
-    }
+    // Primary Color
+    $wp_customize->add_setting("westpace_primary_color", array(
+        "default" => "#1565C0",
+        "sanitize_callback" => "sanitize_hex_color",
+    ));
     
-    .header-container {
-        padding: 0 var(--spacing-md);
-    }
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, "westpace_primary_color", array(
+        "label" => __("Primary Color", "westpace-material"),
+        "section" => "westpace_colors",
+        "settings" => "westpace_primary_color",
+    )));
+    
+    // Secondary Color
+    $wp_customize->add_setting("westpace_secondary_color", array(
+        "default" => "#FF6F00",
+        "sanitize_callback" => "sanitize_hex_color",
+    ));
+    
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, "westpace_secondary_color", array(
+        "label" => __("Secondary Color", "westpace-material"),
+        "section" => "westpace_colors",
+        "settings" => "westpace_secondary_color",
+    )));
 }
+add_action("customize_register", "westpace_customize_register");
 
-@media (max-width: 480px) {
-    .hero-section {
-        min-height: 80vh;
-        padding: var(--spacing-xl) 0;
-    }
-    
-    .material-button {
-        width: 100%;
-        max-width: 280px;
-    }
-}';
+function westpace_customizer_css() {
+    $primary_color = get_theme_mod("westpace_primary_color", "#1565C0");
+    $secondary_color = get_theme_mod("westpace_secondary_color", "#FF6F00");
+    ?>
+    <style type="text/css">
+        :root {
+            --primary-color: <?php echo esc_attr($primary_color); ?>;
+            --secondary-color: <?php echo esc_attr($secondary_color); ?>;
+        }
+    </style>
+    <?php
+}
+add_action("wp_head", "westpace_customizer_css");
+';
         
-        file_put_contents($this->themes_path . "/{$this->target_theme}/style.css", $style_content);
+        file_put_contents($this->themes_path . "/{$this->target_theme}/inc/customizer.php", $customizer_content);
+        
+        // Create template-functions.php
+        $template_functions_content = '<?php
+/**
+ * Functions which enhance the theme by hooking into WordPress
+ */
+
+/**
+ * Adds custom classes to the array of body classes.
+ */
+function westpace_body_classes($classes) {
+    // Adds a class of hfeed to non-singular pages.
+    if (!is_singular()) {
+        $classes[] = "hfeed";
+    }
+    
+    // Adds a class of no-sidebar when there is no sidebar present.
+    if (!is_active_sidebar("sidebar-1")) {
+        $classes[] = "no-sidebar";
+    }
+    
+    return $classes;
+}
+add_filter("body_class", "westpace_body_classes");
+
+/**
+ * Add a pingback url auto-discovery header for single posts, pages, or attachments.
+ */
+function westpace_pingback_header() {
+    if (is_singular() && pings_open()) {
+        printf("<link rel=\"pingback\" href=\"%s\">", esc_url(get_bloginfo("pingback_url")));
+    }
+}
+add_action("wp_head", "westpace_pingback_header");
+';
+        
+        file_put_contents($this->themes_path . "/{$this->target_theme}/inc/template-functions.php", $template_functions_content);
+        
+        // Create README.md
+        $readme_content = '# Westpace Material Design Enhanced
+
+A modern WordPress theme with Material Design principles for West Pace Apparels.
+
+## Features
+
+- **Material Design Components**: Cards, buttons, elevation, and modern UI elements
+- **Enhanced WooCommerce Integration**: Optimized product pages, cart, and checkout
+- **Responsive Design**: Mobile-first approach with responsive grid system
+- **Performance Optimized**: Lazy loading, optimized CSS/JS, and security enhancements
+- **Accessibility Ready**: WCAG compliant with proper semantic markup
+- **Modern Typography**: Roboto and Roboto Slab font families
+- **Advanced Navigation**: Mobile-friendly navigation with smooth scrolling
+- **Customizer Options**: Material Design color customization
+
+## Installation
+
+1. Upload the theme to `/wp-content/themes/westpace-material/`
+2. Activate the theme through the WordPress admin
+3. Go to Appearance > Customize to configure theme options
+4. Install and configure WooCommerce for ecommerce functionality
+
+## Theme Structure
+
+```
+westpace-material/
+├── assets/
+│   ├── css/
+│   │   ├── material-design.css
+│   │   └── woocommerce.css
+│   ├── js/
+│   │   └── theme.js
+│   └── images/
+├── inc/
+│   ├── customizer.php
+│   ├── template-functions.php
+│   └── class-walker-nav-menu.php
+├── woocommerce/
+├── template-parts/
+├── patterns/
+└── templates/
+```
+
+## Customization
+
+The theme can be customized through:
+
+- **WordPress Customizer**: Appearance > Customize
+- **CSS Variables**: Material Design color system
+- **Child Themes**: For advanced customizations
+- **Hooks and Filters**: Developer-friendly theme hooks
+
+## Browser Support
+
+- Chrome/Chromium (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
+- Internet Explorer 11+
+
+## License
+
+GPL v2 or later
+
+## Changelog
+
+### 2.1.0
+- Enhanced Material Design implementation
+- Improved WooCommerce integration
+- Performance optimizations
+- Mobile navigation improvements
+- Accessibility enhancements
+
+---
+
+**West Pace Apparels** - Premium Garment Manufacturing Since 1998
+';
+        
+        file_put_contents($this->themes_path . "/{$this->target_theme}/README.md", $readme_content);
     }
     
     /**
@@ -1949,7 +2264,10 @@ advanced WooCommerce features, and optimized performance.
         
         foreach ($iterator as $item) {
             if ($item->isDir()) {
-                mkdir($destination . DIRECTORY_SEPARATOR . $iterator->getSubPathName(), 0755, true);
+                $dest_dir = $destination . DIRECTORY_SEPARATOR . $iterator->getSubPathName();
+                if (!is_dir($dest_dir)) {
+                    mkdir($dest_dir, 0755, true);
+                }
             } else {
                 copy($item, $destination . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
             }
@@ -1959,51 +2277,125 @@ advanced WooCommerce features, and optimized performance.
     }
 }
 
-// Check if running via CLI or web
+// Execution logic with improved error handling
+function runConverter() {
+    try {
+        $converter = new WestpaceMaterialConverter();
+        return $converter->convert();
+    } catch (Exception $e) {
+        if (php_sapi_name() === 'cli') {
+            echo "❌ Fatal Error: " . $e->getMessage() . "\n";
+        } else {
+            echo "<div style='color: red; padding: 20px; border: 1px solid red; margin: 20px;'>";
+            echo "<h3>❌ Fatal Error</h3>";
+            echo "<p>" . htmlspecialchars($e->getMessage()) . "</p>";
+            echo "</div>";
+        }
+        return false;
+    }
+}
+
+// Check execution context and run accordingly
 if (php_sapi_name() === "cli") {
     // Command line execution
-    $converter = new WestpaceMaterialConverter();
-    $converter->convert();
+    echo "Westpace Material Theme Converter\n";
+    echo "=================================\n\n";
+    runConverter();
 } elseif (isset($_GET["convert"]) && $_GET["convert"] === "1") {
-    // Web execution with security check
-    if (!current_user_can("manage_options")) {
+    // Web execution with basic security
+    if (defined('ABSPATH') && !current_user_can("manage_options")) {
         wp_die("Unauthorized access");
     }
     
-    echo "<pre>";
-    $converter = new WestpaceMaterialConverter();
-    $converter->convert();
+    echo "<pre style='background: #f0f0f0; padding: 20px; margin: 20px; border-radius: 8px;'>";
+    runConverter();
     echo "</pre>";
 } else {
     // Show conversion interface
-    if (!current_user_can("manage_options")) {
+    if (defined('ABSPATH') && !current_user_can("manage_options")) {
         wp_die("Unauthorized access");
     }
     
     echo "
-    <div style=\"padding: 20px; font-family: Arial, sans-serif;\">
-        <h1>🚀 Westpace Material Theme Converter</h1>
-        <p>This tool will convert your apparel-ecommerce-store theme into an enhanced westpace-material theme with Material Design principles and advanced ecommerce features.</p>
-        
-        <h2>✨ What will be enhanced:</h2>
-        <ul>
-            <li>Material Design styling and components</li>
-            <li>Enhanced navigation with mobile support</li>
-            <li>Advanced WooCommerce integration</li>
-            <li>Improved product pages and cart functionality</li>
-            <li>Responsive design optimizations</li>
-            <li>Performance and security enhancements</li>
-            <li>Enhanced footer with widget areas</li>
-            <li>Modern JavaScript interactions</li>
-        </ul>
-        
-        <p><strong>⚠️ Important:</strong> This will backup your existing theme before conversion.</p>
-        
-        <p>
-            <a href=\"?convert=1\" style=\"background: #0073aa; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;\">
-                🔄 Start Conversion
-            </a>
+    <div style='padding: 40px; font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif; max-width: 800px; margin: 0 auto;'>
+        <h1 style='color: #1565C0; margin-bottom: 20px;'>🚀 Westpace Material Theme Converter</h1>
+        <p style='font-size: 18px; line-height: 1.6; margin-bottom: 30px;'>
+            This tool converts your basic apparel-ecommerce-store theme into an enhanced 
+            <strong>westpace-material</strong> theme with Material Design principles and advanced ecommerce features.
         </p>
+        
+        <div style='background: #f8f9fa; padding: 30px; border-radius: 12px; margin-bottom: 30px;'>
+            <h2 style='color: #1565C0; margin-top: 0;'>✨ Enhancement Features:</h2>
+            <div style='display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;'>
+                <div>
+                    <h3 style='color: #333; margin-bottom: 10px;'>🎨 Design</h3>
+                    <ul style='margin: 0; padding-left: 20px;'>
+                        <li>Material Design components</li>
+                        <li>Modern typography (Roboto fonts)</li>
+                        <li>Responsive grid system</li>
+                        <li>Smooth animations</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 style='color: #333; margin-bottom: 10px;'>🛒 E-commerce</h3>
+                    <ul style='margin: 0; padding-left: 20px;'>
+                        <li>Enhanced WooCommerce integration</li>
+                        <li>Improved product pages</li>
+                        <li>Advanced cart functionality</li>
+                        <li>Better checkout experience</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 style='color: #333; margin-bottom: 10px;'>⚡ Performance</h3>
+                    <ul style='margin: 0; padding-left: 20px;'>
+                        <li>Optimized CSS & JavaScript</li>
+                        <li>Lazy loading images</li>
+                        <li>Security enhancements</li>
+                        <li>Mobile-first approach</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 style='color: #333; margin-bottom: 10px;'>🎯 Features</h3>
+                    <ul style='margin: 0; padding-left: 20px;'>
+                        <li>Advanced navigation</li>
+                        <li>Customizer options</li>
+                        <li>Widget areas</li>
+                        <li>SEO optimized</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div style='background: #fff3cd; border: 1px solid #ffeaa7; padding: 20px; border-radius: 8px; margin-bottom: 30px;'>
+            <h3 style='color: #856404; margin-top: 0;'>⚠️ Important Notes:</h3>
+            <ul style='margin: 0; padding-left: 20px; color: #856404;'>
+                <li>This will automatically backup your existing theme before conversion</li>
+                <li>The new theme will be created as 'westpace-material'</li>
+                <li>You can activate it from Appearance > Themes after conversion</li>
+                <li>All original theme files will be preserved</li>
+            </ul>
+        </div>
+        
+        <div style='text-align: center;'>
+            <a href='?convert=1' style='
+                display: inline-block;
+                background: #1565C0;
+                color: white;
+                padding: 16px 32px;
+                text-decoration: none;
+                border-radius: 8px;
+                font-weight: 500;
+                font-size: 16px;
+                box-shadow: 0 4px 12px rgba(21, 101, 192, 0.3);
+                transition: all 0.3s ease;
+            ' onmouseover='this.style.transform=\"translateY(-2px)\"; this.style.boxShadow=\"0 6px 16px rgba(21, 101, 192, 0.4)\"' onmouseout='this.style.transform=\"translateY(0)\"; this.style.boxShadow=\"0 4px 12px rgba(21, 101, 192, 0.3)\"'>
+                🔄 Start Theme Conversion
+            </a>
+        </div>
+        
+        <div style='margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; color: #666;'>
+            <p>Need help? Check the generated README.md file after conversion for detailed instructions.</p>
+        </div>
     </div>";
 }
 ?>
