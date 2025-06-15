@@ -335,7 +335,7 @@ function westpace_contact_form_handler() {
 
     // Prepare email
     $to = get_option('admin_email');
-    $email_subject = sprintf(__('[%s] Contact Form: %s', 'westpace-material'), get_bloginfo('name'), $subject);
+    $email_subject = sprintf(__('Contact Form: %s', 'westpace-material'), $subject);
     $email_message = sprintf(
         __("Name: %s\nEmail: %s\nSubject: %s\n\nMessage:\n%s", 'westpace-material'),
         $name,
@@ -343,52 +343,106 @@ function westpace_contact_form_handler() {
         $subject,
         $message
     );
-    $headers = array('Content-Type: text/plain; charset=UTF-8', 'From: ' . $name . ' <' . $email . '>');
+
+    $headers = array(
+        'From: ' . get_bloginfo('name') . ' <' . get_option('admin_email') . '>',
+        'Reply-To: ' . $name . ' <' . $email . '>',
+        'Content-Type: text/plain; charset=UTF-8'
+    );
 
     // Send email
     if (wp_mail($to, $email_subject, $email_message, $headers)) {
-        wp_send_json_success(__('Thank you for your message! We will get back to you soon!', 'westpace-material'));
+        wp_send_json_success(__('Thank you! Your message has been sent successfully.', 'westpace-material'));
     } else {
         wp_send_json_error(__('Sorry, there was an error sending your message. Please try again.', 'westpace-material'));
     }
 }
-add_action('wp_ajax_contact_form', 'westpace_contact_form_handler');
-add_action('wp_ajax_nopriv_contact_form', 'westpace_contact_form_handler');
+add_action('wp_ajax_westpace_contact_form', 'westpace_contact_form_handler');
+add_action('wp_ajax_nopriv_westpace_contact_form', 'westpace_contact_form_handler');
 
 /**
- * Admin Enhancements
+ * Newsletter Subscription Handler
  */
-function westpace_admin_enhancements() {
-    // Custom admin footer text
-    function westpace_admin_footer_text($footer_text) {
-        return sprintf(
-            __('Thank you for using %s theme by %s.', 'westpace-material'),
-            '<strong>Westpace Material</strong>',
-            '<a href="https://westpace.com" target="_blank">West Pace Apparels</a>'
-        );
+function westpace_newsletter_handler() {
+    // Verify nonce
+    if (!wp_verify_nonce($_POST['nonce'], 'westpace_nonce')) {
+        wp_die(__('Security check failed', 'westpace-material'));
     }
-    add_filter('admin_footer_text', 'westpace_admin_footer_text');
+
+    $email = sanitize_email($_POST['email']);
+
+    if (!is_email($email)) {
+        wp_send_json_error(__('Please provide a valid email address.', 'westpace-material'));
+    }
+
+    // Here you would integrate with your preferred newsletter service
+    // For now, we'll just store in WordPress options or send an email
     
-    // Remove WordPress version from admin footer
-    function westpace_remove_admin_footer_version() {
-        return '';
+    $subscribers = get_option('westpace_newsletter_subscribers', array());
+    
+    if (!in_array($email, $subscribers)) {
+        $subscribers[] = $email;
+        update_option('westpace_newsletter_subscribers', $subscribers);
+        
+        // Send notification email to admin
+        wp_mail(
+            get_option('admin_email'),
+            __('New Newsletter Subscription', 'westpace-material'),
+            sprintf(__('New subscriber: %s', 'westpace-material'), $email)
+        );
+        
+        wp_send_json_success(__('Thank you for subscribing to our newsletter!', 'westpace-material'));
+    } else {
+        wp_send_json_error(__('This email is already subscribed.', 'westpace-material'));
     }
-    add_filter('update_footer', 'westpace_remove_admin_footer_version', 11);
 }
-add_action('admin_init', 'westpace_admin_enhancements');
+add_action('wp_ajax_westpace_newsletter', 'westpace_newsletter_handler');
+add_action('wp_ajax_nopriv_westpace_newsletter', 'westpace_newsletter_handler');
+
+/**
+ * Color utility functions
+ */
+function westpace_hex_to_rgb($hex) {
+    $hex = str_replace('#', '', $hex);
+    $length = strlen($hex);
+    
+    if ($length == 3) {
+        $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+    }
+    
+    return array(
+        'r' => hexdec(substr($hex, 0, 2)),
+        'g' => hexdec(substr($hex, 2, 2)),
+        'b' => hexdec(substr($hex, 4, 2))
+    );
+}
+
+function westpace_darken_color($hex, $amount = 0.1) {
+    $rgb = westpace_hex_to_rgb($hex);
+    $rgb['r'] = max(0, $rgb['r'] - ($rgb['r'] * $amount));
+    $rgb['g'] = max(0, $rgb['g'] - ($rgb['g'] * $amount));
+    $rgb['b'] = max(0, $rgb['b'] - ($rgb['b'] * $amount));
+    
+    return sprintf('#%02x%02x%02x', $rgb['r'], $rgb['g'], $rgb['b']);
+}
+
+function westpace_lighten_color($hex, $amount = 0.1) {
+    $rgb = westpace_hex_to_rgb($hex);
+    $rgb['r'] = min(255, $rgb['r'] + ((255 - $rgb['r']) * $amount));
+    $rgb['g'] = min(255, $rgb['g'] + ((255 - $rgb['g']) * $amount));
+    $rgb['b'] = min(255, $rgb['b'] + ((255 - $rgb['b']) * $amount));
+    
+    return sprintf('#%02x%02x%02x', $rgb['r'], $rgb['g'], $rgb['b']);
+}
 
 /**
  * Theme Activation Hook
  */
 function westpace_theme_activation() {
-    // Flush rewrite rules
-    flush_rewrite_rules();
-    
-    // Set default customizer values
+    // Set default theme options
     $defaults = array(
         'hero_title' => __('West Pace Apparels', 'westpace-material'),
         'hero_subtitle' => __('Premium Garment Manufacturing Since 1998', 'westpace-material'),
-        'hero_description' => __('Family-owned Fijian company specializing in school wear, workwear, and winterwear for Australian and South Pacific markets.', 'westpace-material'),
         'footer_description' => __('Premium garment manufacturing with over 24 years of excellence. Serving Australia, New Zealand, and the South Pacific.', 'westpace-material'),
         'footer_phone' => '+679123456',
         'footer_phone_display' => '+679 123 456',
