@@ -1,0 +1,4 @@
+name: westpace
+recipe: wordpress
+config:
+  webroot: wordpress
