@@ -1,0 +1,183 @@
+/*
+Theme Name: West Pace Material Design
+Description: Modern Material Design WordPress theme for West Pace Apparels with WooCommerce integration
+Version: 2.1.0
+Author: West Pace Development Team
+Text Domain: westpace-material
+Tags: material-design, ecommerce, woocommerce, business, manufacturing, modern
+*/
+
+:root {
+  --primary-color: #1565C0;
+  --primary-light: #42A5F5;
+  --primary-dark: #0D47A1;
+  --secondary-color: #FF6F00;
+  --secondary-light: #FFB74D;
+  --accent-color: #00BCD4;
+  --background-color: #FAFAFA;
+  --surface-color: #FFFFFF;
+  --text-primary: rgba(0, 0, 0, 0.87);
+  --text-secondary: rgba(0, 0, 0, 0.60);
+  --text-disabled: rgba(0, 0, 0, 0.38);
+  --success-color: #4CAF50;
+  --warning-color: #FF9800;
+  --error-color: #F44336;
+  --gradient-primary: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  --gradient-hero: linear-gradient(135deg, #1565C0 0%, #42A5F5 50%, #00BCD4 100%);
+  --shadow-1: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  --shadow-2: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  --shadow-3: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+  --shadow-4: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Roboto+Slab:wght@300;400;500;700&display=swap');
+
+/* EMERGENCY OVERRIDE - Force immediate visual changes */
+body {
+  font-family: 'Roboto', sans-serif !important;
+  background-color: #FAFAFA !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: rgba(0, 0, 0, 0.87) !important;
+  line-height: 1.6 !important;
+}
+
+/* Make changes immediately visible */
+.site-header {
+  background: rgba(255, 255, 255, 0.98) !important;
+  backdrop-filter: blur(10px) !important;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23) !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 1000 !important;
+  padding: 16px 0 !important;
+}
+
+.hero-section {
+  background: linear-gradient(135deg, #1565C0 0%, #42A5F5 50%, #00BCD4 100%) !important;
+  color: white !important;
+  padding: 120px 0 80px 0 !important;
+  text-align: center !important;
+  min-height: 600px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.hero-title {
+  font-size: 4rem !important;
+  font-weight: 900 !important;
+  margin-bottom: 24px !important;
+  line-height: 1.1 !important;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3) !important;
+  color: white !important;
+}
+
+.btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 16px 32px !important;
+  margin: 8px !important;
+  border: none !important;
+  border-radius: 8px !important;
+  text-decoration: none !important;
+  text-transform: uppercase !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  letter-spacing: 0.5px !important;
+  cursor: pointer !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23) !important;
+  min-width: 120px !important;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #1565C0 0%, #42A5F5 100%) !important;
+  color: white !important;
+}
+
+.btn-secondary {
+  background-color: #FF6F00 !important;
+  color: white !important;
+}
+
+.btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23) !important;
+}
+
+.container {
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 0 24px !important;
+}
+
+/* Force service cards to show */
+.services-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+  gap: 32px !important;
+  margin-top: 64px !important;
+}
+
+.service-card {
+  background: white !important;
+  padding: 48px 32px !important;
+  border-radius: 16px !important;
+  text-align: center !important;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.service-card:hover {
+  transform: translateY(-8px) !important;
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22) !important;
+}
+
+.service-icon {
+  font-size: 64px !important;
+  color: #1565C0 !important;
+  display: block !important;
+  margin-bottom: 24px !important;
+}
+
+/* Typography overrides */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Roboto Slab', serif !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+  margin: 0 0 16px 0 !important;
+}
+
+h1 { font-size: 3.5rem !important; font-weight: 700 !important; }
+h2 { font-size: 2.5rem !important; font-weight: 600 !important; color: #1565C0 !important; }
+h3 { font-size: 2rem !important; font-weight: 500 !important; }
+
+/* Section styling */
+.section {
+  padding: 80px 0 !important;
+}
+
+.section-title {
+  text-align: center !important;
+  margin-bottom: 48px !important;
+  color: #1565C0 !important;
+  position: relative !important;
+}
+
+/* Footer styling */
+.site-footer {
+  background: #0D47A1 !important;
+  color: white !important;
+  padding: 64px 0 32px 0 !important;
+  margin-top: 0 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-title { font-size: 2.5rem !important; }
+  .services-grid { grid-template-columns: 1fr !important; }
+  .container { padding: 0 16px !important; }
+}

@@ -3,6 +3,9 @@
 <head>
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#1565C0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
@@ -24,17 +27,29 @@
             </div>
             
             <nav class="main-navigation">
-                <?php wp_nav_menu(array('theme_location' => 'primary')); ?>
+                <?php wp_nav_menu(array(
+                    'theme_location' => 'primary',
+                    'menu_class' => 'primary-menu',
+                    'fallback_cb' => false,
+                )); ?>
             </nav>
             
-            <?php if (class_exists('WooCommerce')) : ?>
-            <div class="header-cart">
-                <a href="<?php echo esc_url(wc_get_cart_url()); ?>">
-                    <span class="material-icons">shopping_cart</span>
-                    <span class="cart-count"><?php echo WC()->cart->get_cart_contents_count(); ?></span>
-                </a>
+            <div class="header-actions">
+                <?php if (class_exists('WooCommerce')) : ?>
+                <div class="header-cart">
+                    <a href="<?php echo esc_url(wc_get_cart_url()); ?>" title="View Cart">
+                        <span class="material-icons">shopping_cart</span>
+                        <?php if (WC()->cart->get_cart_contents_count() > 0) : ?>
+                        <span class="cart-count"><?php echo WC()->cart->get_cart_contents_count(); ?></span>
+                        <?php endif; ?>
+                    </a>
+                </div>
+                <?php endif; ?>
+                
+                <button class="menu-toggle" aria-controls="primary-menu" aria-expanded="false">
+                    <span class="material-icons">menu</span>
+                </button>
             </div>
-            <?php endif; ?>
         </div>
     </header>
     
