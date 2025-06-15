@@ -1,6 +1,6 @@
 <?php
 /**
- * Westpace Material Design Theme Customizer
+ * Westpace Material Theme Customizer
  * 
  * @package Westpace_Material
  */
@@ -11,154 +11,197 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Add customizer settings
+ * Add postMessage support for site title and description for the Theme Customizer.
  */
 function westpace_customize_register($wp_customize) {
-    
-    // Theme Colors Section
+    $wp_customize->get_setting('blogname')->transport         = 'postMessage';
+    $wp_customize->get_setting('blogdescription')->transport  = 'postMessage';
+    $wp_customize->get_setting('header_textcolor')->transport = 'postMessage';
+
+    if (isset($wp_customize->selective_refresh)) {
+        $wp_customize->selective_refresh->add_partial('blogname', array(
+            'selector'        => '.site-title a',
+            'render_callback' => 'westpace_customize_partial_blogname',
+        ));
+        $wp_customize->selective_refresh->add_partial('blogdescription', array(
+            'selector'        => '.site-description',
+            'render_callback' => 'westpace_customize_partial_blogdescription',
+        ));
+    }
+
+    // Theme Options Panel
+    $wp_customize->add_panel('westpace_theme_options', array(
+        'title'       => __('Theme Options', 'westpace-material'),
+        'description' => __('Customize your theme settings', 'westpace-material'),
+        'priority'    => 30,
+    ));
+
+    // Colors Section
     $wp_customize->add_section('westpace_colors', array(
-        'title'    => __('Theme Colors', 'westpace-material'),
-        'priority' => 30,
+        'title'    => __('Colors', 'westpace-material'),
+        'panel'    => 'westpace_theme_options',
+        'priority' => 10,
     ));
 
     // Primary Color
-    $wp_customize->add_setting('westpace_primary_color', array(
-        'default'           => '#1976D2',
+    $wp_customize->add_setting('primary_color', array(
+        'default'           => '#2196F3',
         'sanitize_callback' => 'sanitize_hex_color',
         'transport'         => 'postMessage',
     ));
 
-    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'westpace_primary_color', array(
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'primary_color', array(
         'label'    => __('Primary Color', 'westpace-material'),
         'section'  => 'westpace_colors',
-        'settings' => 'westpace_primary_color',
+        'settings' => 'primary_color',
     )));
 
     // Secondary Color
-    $wp_customize->add_setting('westpace_secondary_color', array(
-        'default'           => '#FF6D00',
+    $wp_customize->add_setting('secondary_color', array(
+        'default'           => '#FF9800',
         'sanitize_callback' => 'sanitize_hex_color',
         'transport'         => 'postMessage',
     ));
 
-    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'westpace_secondary_color', array(
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'secondary_color', array(
         'label'    => __('Secondary Color', 'westpace-material'),
         'section'  => 'westpace_colors',
-        'settings' => 'westpace_secondary_color',
-    )));
-
-    // Text Color
-    $wp_customize->add_setting('westpace_text_color', array(
-        'default'           => '#0F172A',
-        'sanitize_callback' => 'sanitize_hex_color',
-        'transport'         => 'postMessage',
-    ));
-
-    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'westpace_text_color', array(
-        'label'    => __('Text Color', 'westpace-material'),
-        'section'  => 'westpace_colors',
-        'settings' => 'westpace_text_color',
+        'settings' => 'secondary_color',
     )));
 
     // Background Color
-    $wp_customize->add_setting('westpace_background_color', array(
-        'default'           => '#FFFFFF',
+    $wp_customize->add_setting('background_color', array(
+        'default'           => '#F8FAFC',
         'sanitize_callback' => 'sanitize_hex_color',
         'transport'         => 'postMessage',
     ));
 
-    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'westpace_background_color', array(
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'background_color', array(
         'label'    => __('Background Color', 'westpace-material'),
         'section'  => 'westpace_colors',
-        'settings' => 'westpace_background_color',
+        'settings' => 'background_color',
+    )));
+
+    // Text Color
+    $wp_customize->add_setting('text_color', array(
+        'default'           => '#334155',
+        'sanitize_callback' => 'sanitize_hex_color',
+        'transport'         => 'postMessage',
+    ));
+
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'text_color', array(
+        'label'    => __('Text Color', 'westpace-material'),
+        'section'  => 'westpace_colors',
+        'settings' => 'text_color',
     )));
 
     // Typography Section
     $wp_customize->add_section('westpace_typography', array(
         'title'    => __('Typography', 'westpace-material'),
-        'priority' => 35,
-    ));
-
-    // Heading Font
-    $wp_customize->add_setting('heading_font', array(
-        'default'           => 'Inter',
-        'sanitize_callback' => 'westpace_sanitize_font',
-        'transport'         => 'postMessage',
-    ));
-
-    $wp_customize->add_control('heading_font', array(
-        'type'     => 'select',
-        'section'  => 'westpace_typography',
-        'label'    => __('Heading Font', 'westpace-material'),
-        'choices'  => westpace_get_font_choices(),
+        'panel'    => 'westpace_theme_options',
+        'priority' => 20,
     ));
 
     // Body Font
     $wp_customize->add_setting('body_font', array(
         'default'           => 'Inter',
-        'sanitize_callback' => 'westpace_sanitize_font',
+        'sanitize_callback' => 'sanitize_text_field',
         'transport'         => 'postMessage',
     ));
 
     $wp_customize->add_control('body_font', array(
-        'type'     => 'select',
-        'section'  => 'westpace_typography',
         'label'    => __('Body Font', 'westpace-material'),
-        'choices'  => westpace_get_font_choices(),
+        'section'  => 'westpace_typography',
+        'type'     => 'select',
+        'choices'  => array(
+            'Inter'       => 'Inter',
+            'Roboto'      => 'Roboto',
+            'Open Sans'   => 'Open Sans',
+            'Lato'        => 'Lato',
+            'Poppins'     => 'Poppins',
+            'Montserrat'  => 'Montserrat',
+            'Source Sans Pro' => 'Source Sans Pro',
+            'System'      => 'System Default',
+        ),
     ));
 
-    // Base Font Size
+    // Heading Font
+    $wp_customize->add_setting('heading_font', array(
+        'default'           => 'Inter',
+        'sanitize_callback' => 'sanitize_text_field',
+        'transport'         => 'postMessage',
+    ));
+
+    $wp_customize->add_control('heading_font', array(
+        'label'    => __('Heading Font', 'westpace-material'),
+        'section'  => 'westpace_typography',
+        'type'     => 'select',
+        'choices'  => array(
+            'Inter'       => 'Inter',
+            'Roboto'      => 'Roboto',
+            'Roboto Slab' => 'Roboto Slab',
+            'Playfair Display' => 'Playfair Display',
+            'Merriweather' => 'Merriweather',
+            'Montserrat'  => 'Montserrat',
+            'Poppins'     => 'Poppins',
+            'System'      => 'System Default',
+        ),
+    ));
+
+    // Font Size
     $wp_customize->add_setting('base_font_size', array(
-        'default'           => 16,
+        'default'           => '16',
         'sanitize_callback' => 'absint',
         'transport'         => 'postMessage',
     ));
 
     $wp_customize->add_control('base_font_size', array(
-        'type'        => 'range',
-        'section'     => 'westpace_typography',
         'label'       => __('Base Font Size (px)', 'westpace-material'),
+        'section'     => 'westpace_typography',
+        'type'        => 'range',
         'input_attrs' => array(
-            'min'  => 12,
-            'max'  => 24,
+            'min'  => 14,
+            'max'  => 20,
             'step' => 1,
         ),
     ));
 
     // Layout Section
     $wp_customize->add_section('westpace_layout', array(
-        'title'    => __('Layout Options', 'westpace-material'),
-        'priority' => 40,
+        'title'    => __('Layout', 'westpace-material'),
+        'panel'    => 'westpace_theme_options',
+        'priority' => 30,
     ));
 
     // Container Width
     $wp_customize->add_setting('container_width', array(
-        'default'           => 1200,
+        'default'           => '1200',
         'sanitize_callback' => 'absint',
         'transport'         => 'postMessage',
     ));
 
     $wp_customize->add_control('container_width', array(
-        'type'        => 'range',
-        'section'     => 'westpace_layout',
         'label'       => __('Container Max Width (px)', 'westpace-material'),
+        'section'     => 'westpace_layout',
+        'type'        => 'range',
         'input_attrs' => array(
             'min'  => 960,
-            'max'  => 1600,
-            'step' => 40,
+            'max'  => 1400,
+            'step' => 20,
         ),
     ));
 
     // Sidebar Position
     $wp_customize->add_setting('sidebar_position', array(
         'default'           => 'right',
-        'sanitize_callback' => 'westpace_sanitize_sidebar_position',
+        'sanitize_callback' => 'westpace_sanitize_select',
+        'transport'         => 'refresh',
     ));
 
     $wp_customize->add_control('sidebar_position', array(
-        'type'    => 'radio',
-        'section' => 'westpace_layout',
         'label'   => __('Sidebar Position', 'westpace-material'),
+        'section' => 'westpace_layout',
+        'type'    => 'select',
         'choices' => array(
             'left'  => __('Left', 'westpace-material'),
             'right' => __('Right', 'westpace-material'),
@@ -168,24 +211,27 @@ function westpace_customize_register($wp_customize) {
 
     // Header Section
     $wp_customize->add_section('westpace_header', array(
-        'title'    => __('Header Options', 'westpace-material'),
-        'priority' => 45,
+        'title'    => __('Header', 'westpace-material'),
+        'panel'    => 'westpace_theme_options',
+        'priority' => 40,
     ));
 
     // Header Style
     $wp_customize->add_setting('header_style', array(
         'default'           => 'default',
-        'sanitize_callback' => 'westpace_sanitize_header_style',
+        'sanitize_callback' => 'westpace_sanitize_select',
+        'transport'         => 'refresh',
     ));
 
     $wp_customize->add_control('header_style', array(
-        'type'    => 'select',
-        'section' => 'westpace_header',
         'label'   => __('Header Style', 'westpace-material'),
+        'section' => 'westpace_header',
+        'type'    => 'select',
         'choices' => array(
             'default'     => __('Default', 'westpace-material'),
             'transparent' => __('Transparent', 'westpace-material'),
             'minimal'     => __('Minimal', 'westpace-material'),
+            'centered'    => __('Centered', 'westpace-material'),
         ),
     ));
 
@@ -193,29 +239,32 @@ function westpace_customize_register($wp_customize) {
     $wp_customize->add_setting('sticky_header', array(
         'default'           => true,
         'sanitize_callback' => 'wp_validate_boolean',
+        'transport'         => 'refresh',
     ));
 
     $wp_customize->add_control('sticky_header', array(
-        'type'    => 'checkbox',
+        'label'   => __('Sticky Header', 'westpace-material'),
         'section' => 'westpace_header',
-        'label'   => __('Enable Sticky Header', 'westpace-material'),
+        'type'    => 'checkbox',
     ));
 
-    // Search in Header
-    $wp_customize->add_setting('header_search', array(
+    // Show Search in Header
+    $wp_customize->add_setting('show_header_search', array(
         'default'           => true,
         'sanitize_callback' => 'wp_validate_boolean',
+        'transport'         => 'refresh',
     ));
 
-    $wp_customize->add_control('header_search', array(
-        'type'    => 'checkbox',
-        'section' => 'westpace_header',
+    $wp_customize->add_control('show_header_search', array(
         'label'   => __('Show Search in Header', 'westpace-material'),
+        'section' => 'westpace_header',
+        'type'    => 'checkbox',
     ));
 
     // Footer Section
     $wp_customize->add_section('westpace_footer', array(
-        'title'    => __('Footer Options', 'westpace-material'),
+        'title'    => __('Footer', 'westpace-material'),
+        'panel'    => 'westpace_theme_options',
         'priority' => 50,
     ));
 
@@ -223,12 +272,13 @@ function westpace_customize_register($wp_customize) {
     $wp_customize->add_setting('footer_columns', array(
         'default'           => 4,
         'sanitize_callback' => 'absint',
+        'transport'         => 'refresh',
     ));
 
     $wp_customize->add_control('footer_columns', array(
-        'type'    => 'select',
-        'section' => 'westpace_footer',
         'label'   => __('Footer Widget Columns', 'westpace-material'),
+        'section' => 'westpace_footer',
+        'type'    => 'select',
         'choices' => array(
             1 => __('1 Column', 'westpace-material'),
             2 => __('2 Columns', 'westpace-material'),
@@ -237,98 +287,123 @@ function westpace_customize_register($wp_customize) {
         ),
     ));
 
-    // Company Description
-    $wp_customize->add_setting('footer_description', array(
-        'default'           => __('West Pace Apparels - Premium Garment Manufacturing Since 1998', 'westpace-material'),
-        'sanitize_callback' => 'sanitize_textarea_field',
-        'transport'         => 'postMessage',
-    ));
-
-    $wp_customize->add_control('footer_description', array(
-        'type'    => 'textarea',
-        'section' => 'westpace_footer',
-        'label'   => __('Company Description', 'westpace-material'),
-    ));
-
-    // Contact Information
-    $wp_customize->add_setting('footer_phone', array(
-        'default'           => '+1 (555) 123-4567',
-        'sanitize_callback' => 'sanitize_text_field',
-        'transport'         => 'postMessage',
-    ));
-
-    $wp_customize->add_control('footer_phone', array(
-        'type'    => 'tel',
-        'section' => 'westpace_footer',
-        'label'   => __('Phone Number', 'westpace-material'),
-    ));
-
-    $wp_customize->add_setting('footer_phone_display', array(
-        'default'           => '(555) 123-4567',
-        'sanitize_callback' => 'sanitize_text_field',
-        'transport'         => 'postMessage',
-    ));
-
-    $wp_customize->add_control('footer_phone_display', array(
-        'type'    => 'text',
-        'section' => 'westpace_footer',
-        'label'   => __('Phone Display Text', 'westpace-material'),
-    ));
-
-    $wp_customize->add_setting('footer_email', array(
-        'default'           => 'info@westpaceapparels.com',
-        'sanitize_callback' => 'sanitize_email',
-        'transport'         => 'postMessage',
-    ));
-
-    $wp_customize->add_control('footer_email', array(
-        'type'    => 'email',
-        'section' => 'westpace_footer',
-        'label'   => __('Email Address', 'westpace-material'),
-    ));
-
-    $wp_customize->add_setting('footer_address', array(
-        'default'           => '123 Fashion Street, Apparel City, AC 12345',
-        'sanitize_callback' => 'sanitize_textarea_field',
-        'transport'         => 'postMessage',
-    ));
-
-    $wp_customize->add_control('footer_address', array(
-        'type'    => 'textarea',
-        'section' => 'westpace_footer',
-        'label'   => __('Address', 'westpace-material'),
-    ));
-
     // Copyright Text
-    $wp_customize->add_setting('footer_copyright', array(
-        'default'           => '&copy; 2025 West Pace Apparels. All rights reserved.',
+    $wp_customize->add_setting('copyright_text', array(
+        'default'           => '© 2025 West Pace Apparels. All rights reserved.',
         'sanitize_callback' => 'wp_kses_post',
         'transport'         => 'postMessage',
     ));
 
-    $wp_customize->add_control('footer_copyright', array(
-        'type'    => 'textarea',
-        'section' => 'westpace_footer',
+    $wp_customize->add_control('copyright_text', array(
         'label'   => __('Copyright Text', 'westpace-material'),
+        'section' => 'westpace_footer',
+        'type'    => 'textarea',
     ));
 
-    // WooCommerce Settings
+    // Blog Section
+    $wp_customize->add_section('westpace_blog', array(
+        'title'    => __('Blog', 'westpace-material'),
+        'panel'    => 'westpace_theme_options',
+        'priority' => 60,
+    ));
+
+    // Posts per page
+    $wp_customize->add_setting('posts_per_page', array(
+        'default'           => 10,
+        'sanitize_callback' => 'absint',
+        'transport'         => 'refresh',
+    ));
+
+    $wp_customize->add_control('posts_per_page', array(
+        'label'       => __('Posts per Page', 'westpace-material'),
+        'section'     => 'westpace_blog',
+        'type'        => 'number',
+        'input_attrs' => array(
+            'min' => 1,
+            'max' => 20,
+        ),
+    ));
+
+    // Show excerpts
+    $wp_customize->add_setting('show_excerpts', array(
+        'default'           => true,
+        'sanitize_callback' => 'wp_validate_boolean',
+        'transport'         => 'refresh',
+    ));
+
+    $wp_customize->add_control('show_excerpts', array(
+        'label'   => __('Show Post Excerpts', 'westpace-material'),
+        'section' => 'westpace_blog',
+        'type'    => 'checkbox',
+    ));
+
+    // Show breadcrumbs
+    $wp_customize->add_setting('show_breadcrumbs', array(
+        'default'           => true,
+        'sanitize_callback' => 'wp_validate_boolean',
+        'transport'         => 'refresh',
+    ));
+
+    $wp_customize->add_control('show_breadcrumbs', array(
+        'label'   => __('Show Breadcrumbs', 'westpace-material'),
+        'section' => 'westpace_blog',
+        'type'    => 'checkbox',
+    ));
+
+    // Performance Section
+    $wp_customize->add_section('westpace_performance', array(
+        'title'    => __('Performance', 'westpace-material'),
+        'panel'    => 'westpace_theme_options',
+        'priority' => 70,
+    ));
+
+    // Enable lazy loading
+    $wp_customize->add_setting('enable_lazy_loading', array(
+        'default'           => true,
+        'sanitize_callback' => 'wp_validate_boolean',
+        'transport'         => 'refresh',
+    ));
+
+    $wp_customize->add_control('enable_lazy_loading', array(
+        'label'       => __('Enable Lazy Loading', 'westpace-material'),
+        'description' => __('Improves page load speed by loading images as they come into view.', 'westpace-material'),
+        'section'     => 'westpace_performance',
+        'type'        => 'checkbox',
+    ));
+
+    // Minify CSS
+    $wp_customize->add_setting('minify_css', array(
+        'default'           => false,
+        'sanitize_callback' => 'wp_validate_boolean',
+        'transport'         => 'refresh',
+    ));
+
+    $wp_customize->add_control('minify_css', array(
+        'label'       => __('Minify CSS', 'westpace-material'),
+        'description' => __('Reduces CSS file size by removing whitespace and comments.', 'westpace-material'),
+        'section'     => 'westpace_performance',
+        'type'        => 'checkbox',
+    ));
+
+    // WooCommerce Section (if WooCommerce is active)
     if (class_exists('WooCommerce')) {
         $wp_customize->add_section('westpace_woocommerce', array(
-            'title'    => __('WooCommerce Options', 'westpace-material'),
-            'priority' => 55,
+            'title'    => __('WooCommerce', 'westpace-material'),
+            'panel'    => 'westpace_theme_options',
+            'priority' => 80,
         ));
 
         // Products per page
         $wp_customize->add_setting('woocommerce_products_per_page', array(
             'default'           => 12,
             'sanitize_callback' => 'absint',
+            'transport'         => 'refresh',
         ));
 
         $wp_customize->add_control('woocommerce_products_per_page', array(
-            'type'        => 'number',
-            'section'     => 'westpace_woocommerce',
             'label'       => __('Products per Page', 'westpace-material'),
+            'section'     => 'westpace_woocommerce',
+            'type'        => 'number',
             'input_attrs' => array(
                 'min' => 6,
                 'max' => 24,
@@ -339,188 +414,82 @@ function westpace_customize_register($wp_customize) {
         $wp_customize->add_setting('woocommerce_product_columns', array(
             'default'           => 3,
             'sanitize_callback' => 'absint',
-            'transport'         => 'postMessage',
+            'transport'         => 'refresh',
         ));
 
         $wp_customize->add_control('woocommerce_product_columns', array(
-            'type'    => 'select',
-            'section' => 'westpace_woocommerce',
             'label'   => __('Product Columns', 'westpace-material'),
+            'section' => 'westpace_woocommerce',
+            'type'    => 'select',
             'choices' => array(
                 2 => __('2 Columns', 'westpace-material'),
                 3 => __('3 Columns', 'westpace-material'),
                 4 => __('4 Columns', 'westpace-material'),
             ),
         ));
-
-        // Show cart in header
-        $wp_customize->add_setting('woocommerce_cart_header', array(
-            'default'           => true,
-            'sanitize_callback' => 'wp_validate_boolean',
-        ));
-
-        $wp_customize->add_control('woocommerce_cart_header', array(
-            'type'    => 'checkbox',
-            'section' => 'westpace_woocommerce',
-            'label'   => __('Show Cart Icon in Header', 'westpace-material'),
-        ));
     }
 
-    // Performance Section
-    $wp_customize->add_section('westpace_performance', array(
-        'title'    => __('Performance Options', 'westpace-material'),
-        'priority' => 60,
+    // Custom CSS Section
+    $wp_customize->add_section('westpace_custom_css', array(
+        'title'    => __('Additional CSS', 'westpace-material'),
+        'panel'    => 'westpace_theme_options',
+        'priority' => 90,
     ));
 
-    // Enable lazy loading
-    $wp_customize->add_setting('enable_lazy_loading', array(
-        'default'           => true,
-        'sanitize_callback' => 'wp_validate_boolean',
+    $wp_customize->add_setting('custom_css', array(
+        'default'           => '',
+        'sanitize_callback' => 'wp_strip_all_tags',
         'transport'         => 'postMessage',
     ));
 
-    $wp_customize->add_control('enable_lazy_loading', array(
-        'type'    => 'checkbox',
-        'section' => 'westpace_performance',
-        'label'   => __('Enable Lazy Loading for Images', 'westpace-material'),
+    $wp_customize->add_control('custom_css', array(
+        'label'       => __('Custom CSS', 'westpace-material'),
+        'description' => __('Add custom CSS code here.', 'westpace-material'),
+        'section'     => 'westpace_custom_css',
+        'type'        => 'textarea',
+        'input_attrs' => array(
+            'placeholder' => __('Enter your custom CSS here...', 'westpace-material'),
+        ),
     ));
-
-    // Minify CSS
-    $wp_customize->add_setting('minify_css', array(
-        'default'           => false,
-        'sanitize_callback' => 'wp_validate_boolean',
-    ));
-
-    $wp_customize->add_control('minify_css', array(
-        'type'    => 'checkbox',
-        'section' => 'westpace_performance',
-        'label'   => __('Minify CSS', 'westpace-material'),
-    ));
-
-    // GDPR Section
-    $wp_customize->add_section('westpace_gdpr', array(
-        'title'    => __('GDPR & Privacy', 'westpace-material'),
-        'priority' => 65,
-    ));
-
-    // Cookie Notice
-    $wp_customize->add_setting('enable_cookie_notice', array(
-        'default'           => false,
-        'sanitize_callback' => 'wp_validate_boolean',
-    ));
-
-    $wp_customize->add_control('enable_cookie_notice', array(
-        'type'    => 'checkbox',
-        'section' => 'westpace_gdpr',
-        'label'   => __('Enable Cookie Notice', 'westpace-material'),
-    ));
-
-    // Cookie Notice Text
-    $wp_customize->add_setting('cookie_notice_text', array(
-        'default'           => __('This website uses cookies to improve your experience. By continuing to use this site, you accept our use of cookies.', 'westpace-material'),
-        'sanitize_callback' => 'sanitize_textarea_field',
-    ));
-
-    $wp_customize->add_control('cookie_notice_text', array(
-        'type'            => 'textarea',
-        'section'         => 'westpace_gdpr',
-        'label'           => __('Cookie Notice Text', 'westpace-material'),
-        'active_callback' => 'westpace_is_cookie_notice_enabled',
-    ));
-
-    // Privacy Policy Page
-    $wp_customize->add_setting('privacy_policy_page', array(
-        'default'           => '',
-        'sanitize_callback' => 'absint',
-    ));
-
-    $wp_customize->add_control('privacy_policy_page', array(
-        'type'    => 'dropdown-pages',
-        'section' => 'westpace_gdpr',
-        'label'   => __('Privacy Policy Page', 'westpace-material'),
-    ));
-
-    // Custom CSS Section (if not already present)
-    if (!$wp_customize->get_section('custom_css')) {
-        $wp_customize->add_section('westpace_custom_css', array(
-            'title'       => __('Additional CSS', 'westpace-material'),
-            'priority'    => 200,
-            'description' => __('Add custom CSS here to override theme styles.', 'westpace-material'),
-        ));
-
-        $wp_customize->add_setting('westpace_custom_css', array(
-            'default'           => '',
-            'sanitize_callback' => 'wp_strip_all_tags',
-        ));
-
-        $wp_customize->add_control('westpace_custom_css', array(
-            'type'    => 'textarea',
-            'section' => 'westpace_custom_css',
-            'label'   => __('Custom CSS', 'westpace-material'),
-        ));
-    }
 }
 add_action('customize_register', 'westpace_customize_register');
 
 /**
- * Sanitization functions
+ * Render the site title for the selective refresh partial.
  */
-function westpace_sanitize_font($input) {
-    $valid = westpace_get_font_choices();
-    return array_key_exists($input, $valid) ? $input : 'Inter';
-}
-
-function westpace_sanitize_sidebar_position($input) {
-    $valid = array('left', 'right', 'none');
-    return in_array($input, $valid) ? $input : 'right';
-}
-
-function westpace_sanitize_header_style($input) {
-    $valid = array('default', 'transparent', 'minimal');
-    return in_array($input, $valid) ? $input : 'default';
+function westpace_customize_partial_blogname() {
+    bloginfo('name');
 }
 
 /**
- * Active callback functions
+ * Render the site tagline for the selective refresh partial.
  */
-function westpace_is_cookie_notice_enabled() {
-    return get_theme_mod('enable_cookie_notice', false);
+function westpace_customize_partial_blogdescription() {
+    bloginfo('description');
 }
 
 /**
- * Font choices
+ * Sanitize select fields
  */
-function westpace_get_font_choices() {
-    return array(
-        'System'        => __('System Font', 'westpace-material'),
-        'Inter'         => 'Inter',
-        'Roboto'        => 'Roboto',
-        'Open Sans'     => 'Open Sans',
-        'Lato'          => 'Lato',
-        'Poppins'       => 'Poppins',
-        'Montserrat'    => 'Montserrat',
-        'Source Sans Pro' => 'Source Sans Pro',
-        'Nunito'        => 'Nunito',
-        'PT Sans'       => 'PT Sans',
-        'Roboto Slab'   => 'Roboto Slab',
-        'Playfair Display' => 'Playfair Display',
-        'Merriweather'  => 'Merriweather',
-    );
+function westpace_sanitize_select($input, $setting) {
+    $input = sanitize_key($input);
+    $choices = $setting->manager->get_control($setting->id)->choices;
+    return (array_key_exists($input, $choices) ? $input : $setting->default);
 }
 
 /**
- * Bind JS handlers to instantly live-preview changes
+ * Bind JS handlers to instantly live-preview changes.
  */
 function westpace_customize_preview_js() {
-    wp_enqueue_script('westpace-customizer', WESTPACE_THEME_URI . '/assets/js/customizer.js', array('customize-preview'), WESTPACE_VERSION, true);
+    wp_enqueue_script('westpace-customizer', get_template_directory_uri() . '/assets/js/customizer.js', array('customize-preview'), '20210101', true);
 }
 add_action('customize_preview_init', 'westpace_customize_preview_js');
 
 /**
- * Enqueue customizer control scripts
+ * Enqueue customizer controls script
  */
 function westpace_customize_controls_js() {
-    wp_enqueue_script('westpace-customizer-controls', WESTPACE_THEME_URI . '/assets/js/customizer-controls.js', array('customize-controls'), WESTPACE_VERSION, true);
+    wp_enqueue_script('westpace-customizer-controls', get_template_directory_uri() . '/assets/js/customizer-controls.js', array('customize-controls'), '20210101', true);
 }
 add_action('customize_controls_enqueue_scripts', 'westpace_customize_controls_js');
 
@@ -528,38 +497,25 @@ add_action('customize_controls_enqueue_scripts', 'westpace_customize_controls_js
  * Output customizer CSS
  */
 function westpace_customizer_css() {
-    $primary_color = get_theme_mod('westpace_primary_color', '#1976D2');
-    $secondary_color = get_theme_mod('westpace_secondary_color', '#FF6D00');
-    $text_color = get_theme_mod('westpace_text_color', '#0F172A');
-    $background_color = get_theme_mod('westpace_background_color', '#FFFFFF');
-    $container_width = get_theme_mod('container_width', 1200);
-    $base_font_size = get_theme_mod('base_font_size', 16);
-    $heading_font = get_theme_mod('heading_font', 'Inter');
+    $primary_color = get_theme_mod('primary_color', '#2196F3');
+    $secondary_color = get_theme_mod('secondary_color', '#FF9800');
+    $background_color = get_theme_mod('background_color', '#F8FAFC');
+    $text_color = get_theme_mod('text_color', '#334155');
     $body_font = get_theme_mod('body_font', 'Inter');
-    $custom_css = get_theme_mod('westpace_custom_css', '');
-    
+    $heading_font = get_theme_mod('heading_font', 'Inter');
+    $base_font_size = get_theme_mod('base_font_size', 16);
+    $container_width = get_theme_mod('container_width', 1200);
+    $custom_css = get_theme_mod('custom_css', '');
     ?>
     <style type="text/css" id="westpace-customizer-css">
         :root {
-            --primary-600: <?php echo esc_attr($primary_color); ?>;
-            --primary-700: <?php echo esc_attr(westpace_darken_color($primary_color, 0.1)); ?>;
-            --primary-800: <?php echo esc_attr(westpace_darken_color($primary_color, 0.2)); ?>;
-            --primary-500: <?php echo esc_attr(westpace_lighten_color($primary_color, 0.1)); ?>;
-            --primary-400: <?php echo esc_attr(westpace_lighten_color($primary_color, 0.2)); ?>;
+            --primary-color: <?php echo esc_attr($primary_color); ?>;
             --secondary-color: <?php echo esc_attr($secondary_color); ?>;
-            --text-primary: <?php echo esc_attr($text_color); ?>;
             --background: <?php echo esc_attr($background_color); ?>;
-            --container-width: <?php echo esc_attr($container_width); ?>px;
+            --text-primary: <?php echo esc_attr($text_color); ?>;
             --base-font-size: <?php echo esc_attr($base_font_size); ?>px;
+            --container-width: <?php echo esc_attr($container_width); ?>px;
         }
-        
-        <?php if ($heading_font !== 'Inter') : ?>
-        @import url('https://fonts.googleapis.com/css2?family=<?php echo esc_attr(str_replace(' ', '+', $heading_font)); ?>:wght@300;400;500;600;700;800;900&display=swap');
-        <?php endif; ?>
-        
-        <?php if ($body_font !== 'Inter' && $body_font !== $heading_font) : ?>
-        @import url('https://fonts.googleapis.com/css2?family=<?php echo esc_attr(str_replace(' ', '+', $body_font)); ?>:wght@300;400;500;600;700&display=swap');
-        <?php endif; ?>
         
         body {
             font-family: <?php echo $body_font === 'System' ? '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' : '"' . esc_attr($body_font) . '", sans-serif'; ?>;
@@ -577,13 +533,13 @@ function westpace_customizer_css() {
         }
         
         .btn-primary {
-            background-color: var(--primary-600);
-            border-color: var(--primary-600);
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
         }
         
         .btn-primary:hover {
-            background-color: var(--primary-700);
-            border-color: var(--primary-700);
+            background-color: color-mix(in srgb, var(--primary-color) 90%, black);
+            border-color: color-mix(in srgb, var(--primary-color) 90%, black);
         }
         
         .btn-secondary {
@@ -591,12 +547,41 @@ function westpace_customizer_css() {
             border-color: var(--secondary-color);
         }
         
+        .btn-secondary:hover {
+            background-color: color-mix(in srgb, var(--secondary-color) 90%, black);
+            border-color: color-mix(in srgb, var(--secondary-color) 90%, black);
+        }
+        
         a {
-            color: var(--primary-600);
+            color: var(--primary-color);
         }
         
         a:hover {
-            color: var(--primary-700);
+            color: color-mix(in srgb, var(--primary-color) 90%, black);
+        }
+        
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+        
+        .bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+        
+        .border-primary {
+            border-color: var(--primary-color) !important;
+        }
+        
+        .text-secondary {
+            color: var(--secondary-color) !important;
+        }
+        
+        .bg-secondary {
+            background-color: var(--secondary-color) !important;
+        }
+        
+        .border-secondary {
+            border-color: var(--secondary-color) !important;
         }
         
         <?php if ($custom_css) : ?>
@@ -650,60 +635,40 @@ function westpace_minify_css($css) {
 }
 
 /**
- * Customizer selective refresh
+ * Add font loading for custom fonts
  */
-function westpace_customize_partial_blogname() {
-    bloginfo('name');
-}
-
-function westpace_customize_partial_blogdescription() {
-    bloginfo('description');
-}
-
-/**
- * Register partials for selective refresh
- */
-function westpace_customize_register_partials($wp_customize) {
-    // Abort if selective refresh is not available
-    if (!isset($wp_customize->selective_refresh)) {
-        return;
+function westpace_custom_fonts() {
+    $body_font = get_theme_mod('body_font', 'Inter');
+    $heading_font = get_theme_mod('heading_font', 'Inter');
+    
+    $fonts = array();
+    
+    if ($body_font !== 'System') {
+        $fonts[] = $body_font . ':wght@300;400;500;600;700';
     }
-
-    $wp_customize->selective_refresh->add_partial('blogname', array(
-        'selector'        => '.site-title a',
-        'render_callback' => 'westpace_customize_partial_blogname',
-    ));
-
-    $wp_customize->selective_refresh->add_partial('blogdescription', array(
-        'selector'        => '.site-description',
-        'render_callback' => 'westpace_customize_partial_blogdescription',
-    ));
+    
+    if ($heading_font !== 'System' && $heading_font !== $body_font) {
+        $fonts[] = $heading_font . ':wght@300;400;500;600;700;800';
+    }
+    
+    if (!empty($fonts)) {
+        $font_url = 'https://fonts.googleapis.com/css2?family=' . implode('&family=', $fonts) . '&display=swap';
+        wp_enqueue_style('westpace-custom-fonts', $font_url, array(), null);
+    }
 }
-add_action('customize_register', 'westpace_customize_register_partials');
+add_action('wp_enqueue_scripts', 'westpace_custom_fonts');
 
 /**
- * Customizer styles for the admin
+ * Add real-time preview support for certain settings
  */
-function westpace_customizer_styles() {
-    ?>
-    <style type="text/css">
-        .customize-control-title {
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-        
-        .customize-control-description {
-            font-style: italic;
-            color: #666;
-            margin-bottom: 10px;
-        }
-        
-        .customize-section-title {
-            border-bottom: 2px solid #1976D2;
-            padding-bottom: 5px;
-            color: #1976D2;
-        }
-    </style>
-    <?php
+function westpace_customize_preview_js_vars() {
+    if (is_customize_preview()) {
+        wp_localize_script('westpace-customizer', 'westpaceCustomizer', array(
+            'primaryColor'   => get_theme_mod('primary_color', '#2196F3'),
+            'secondaryColor' => get_theme_mod('secondary_color', '#FF9800'),
+            'textColor'      => get_theme_mod('text_color', '#334155'),
+            'backgroundColor' => get_theme_mod('background_color', '#F8FAFC'),
+        ));
+    }
 }
-add_action('customize_controls_print_styles', 'westpace_customizer_styles');
+add_action('wp_enqueue_scripts', 'westpace_customize_preview_js_vars');
