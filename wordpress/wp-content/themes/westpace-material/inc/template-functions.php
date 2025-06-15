@@ -1,10 +1,9 @@
 <?php
 /**
  * Template Functions for Westpace Material Theme
- * Helper functions for template rendering and theme functionality
+ * Helper functions for template files
  * 
  * @package Westpace_Material
- * @version 3.0.0
  */
 
 // Prevent direct access
@@ -13,181 +12,43 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Get the hero section for the homepage
- */
-function westpace_get_hero_section() {
-    if (!get_theme_mod('show_hero_section', true)) {
-        return;
-    }
-
-    $hero_title = get_theme_mod('hero_title', __('West Pace Apparels', 'westpace-material'));
-    $hero_subtitle = get_theme_mod('hero_subtitle', __('Premium Garment Manufacturing Since 1998', 'westpace-material'));
-    $hero_description = get_theme_mod('hero_description', __('Family-owned Fijian company specializing in school wear, workwear, and winterwear for Australian and South Pacific markets.', 'westpace-material'));
-    $hero_cta_text = get_theme_mod('hero_cta_text', __('Shop Now', 'westpace-material'));
-    $hero_cta_url = get_theme_mod('hero_cta_url', '#');
-    $hero_bg_image = get_theme_mod('hero_background_image', WESTPACE_THEME_URI . '/assets/images/hero-bg.jpg');
-
-    ?>
-    <section class="hero-section" style="background-image: url('<?php echo esc_url($hero_bg_image); ?>');">
-        <div class="hero-overlay"></div>
-        <div class="container">
-            <div class="hero-content">
-                <h1 class="hero-title"><?php echo esc_html($hero_title); ?></h1>
-                <h2 class="hero-subtitle"><?php echo esc_html($hero_subtitle); ?></h2>
-                <p class="hero-description"><?php echo esc_html($hero_description); ?></p>
-                <?php if ($hero_cta_text && $hero_cta_url) : ?>
-                    <div class="hero-actions">
-                        <a href="<?php echo esc_url($hero_cta_url); ?>" class="btn btn-primary btn-lg">
-                            <?php echo esc_html($hero_cta_text); ?>
-                        </a>
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
-    </section>
-    <?php
-}
-
-/**
- * Display breadcrumb navigation
- */
-function westpace_breadcrumb() {
-    if (is_front_page()) {
-        return;
-    }
-
-    $separator = '<span class="breadcrumb-separator">/</span>';
-    $home_title = __('Home', 'westpace-material');
-
-    echo '<nav class="breadcrumb-navigation" aria-label="' . esc_attr__('Breadcrumb', 'westpace-material') . '">';
-    echo '<ol class="breadcrumb-list">';
-    
-    // Home link
-    echo '<li class="breadcrumb-item">';
-    echo '<a href="' . esc_url(home_url('/')) . '">' . esc_html($home_title) . '</a>';
-    echo '</li>';
-
-    if (is_single()) {
-        // Single post
-        $category = get_the_category();
-        if (!empty($category)) {
-            echo '<li class="breadcrumb-item">';
-            echo $separator;
-            echo '<a href="' . esc_url(get_category_link($category[0]->term_id)) . '">' . esc_html($category[0]->name) . '</a>';
-            echo '</li>';
-        }
-        
-        echo '<li class="breadcrumb-item active">';
-        echo $separator;
-        echo '<span>' . get_the_title() . '</span>';
-        echo '</li>';
-        
-    } elseif (is_page()) {
-        // Single page
-        $parent_pages = array();
-        $page_id = get_the_ID();
-        
-        while ($page_id) {
-            $page = get_page($page_id);
-            $parent_pages[] = $page;
-            $page_id = $page->post_parent;
-        }
-        
-        $parent_pages = array_reverse($parent_pages);
-        
-        foreach ($parent_pages as $key => $page) {
-            echo '<li class="breadcrumb-item' . (($key === count($parent_pages) - 1) ? ' active' : '') . '">';
-            echo $separator;
-            
-            if ($key === count($parent_pages) - 1) {
-                echo '<span>' . esc_html($page->post_title) . '</span>';
-            } else {
-                echo '<a href="' . esc_url(get_permalink($page->ID)) . '">' . esc_html($page->post_title) . '</a>';
-            }
-            echo '</li>';
-        }
-        
-    } elseif (is_category()) {
-        // Category archive
-        echo '<li class="breadcrumb-item active">';
-        echo $separator;
-        echo '<span>' . single_cat_title('', false) . '</span>';
-        echo '</li>';
-        
-    } elseif (is_tag()) {
-        // Tag archive
-        echo '<li class="breadcrumb-item active">';
-        echo $separator;
-        echo '<span>' . single_tag_title('', false) . '</span>';
-        echo '</li>';
-        
-    } elseif (is_search()) {
-        // Search results
-        echo '<li class="breadcrumb-item active">';
-        echo $separator;
-        echo '<span>' . sprintf(__('Search Results for: %s', 'westpace-material'), get_search_query()) . '</span>';
-        echo '</li>';
-        
-    } elseif (is_404()) {
-        // 404 page
-        echo '<li class="breadcrumb-item active">';
-        echo $separator;
-        echo '<span>' . __('Page Not Found', 'westpace-material') . '</span>';
-        echo '</li>';
-    }
-
-    echo '</ol>';
-    echo '</nav>';
-}
-
-/**
  * Display post meta information
  */
 function westpace_post_meta() {
-    $time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
-    if (get_the_time('U') !== get_the_modified_time('U')) {
-        $time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time><time class="updated" datetime="%3$s">%4$s</time>';
-    }
-
-    $time_string = sprintf($time_string,
-        esc_attr(get_the_date(DATE_W3C)),
-        esc_html(get_the_date()),
-        esc_attr(get_the_modified_date(DATE_W3C)),
-        esc_html(get_the_modified_date())
-    );
-
+    $date = get_the_date();
+    $author = get_the_author();
+    $categories = get_the_category_list(', ');
+    $comments_count = get_comments_number();
+    
     echo '<div class="post-meta">';
     
     // Date
-    echo '<span class="post-date">';
-    echo '<span class="material-icons-round">schedule</span>';
-    echo $time_string;
+    echo '<span class="post-date meta-item">';
+    echo '<span class="material-icons">schedule</span>';
+    echo '<time datetime="' . esc_attr(get_the_date('c')) . '">' . esc_html($date) . '</time>';
     echo '</span>';
     
     // Author
-    echo '<span class="post-author">';
-    echo '<span class="material-icons-round">person</span>';
-    echo '<a href="' . esc_url(get_author_posts_url(get_the_author_meta('ID'))) . '">' . esc_html(get_the_author()) . '</a>';
+    echo '<span class="post-author meta-item">';
+    echo '<span class="material-icons">person</span>';
+    echo '<span>' . esc_html($author) . '</span>';
     echo '</span>';
     
     // Categories
-    $categories_list = get_the_category_list(', ');
-    if ($categories_list) {
-        echo '<span class="post-categories">';
-        echo '<span class="material-icons-round">folder</span>';
-        echo $categories_list;
+    if ($categories) {
+        echo '<span class="post-categories meta-item">';
+        echo '<span class="material-icons">folder</span>';
+        echo '<span>' . $categories . '</span>';
         echo '</span>';
     }
     
-    // Comments count
-    if (comments_open() || get_comments_number()) {
-        echo '<span class="post-comments">';
-        echo '<span class="material-icons-round">comment</span>';
-        comments_popup_link(
-            __('Leave a comment', 'westpace-material'),
-            __('1 Comment', 'westpace-material'),
-            __('% Comments', 'westpace-material')
-        );
+    // Comments
+    if (comments_open() && $comments_count > 0) {
+        echo '<span class="post-comments meta-item">';
+        echo '<span class="material-icons">comment</span>';
+        echo '<a href="' . esc_url(get_comments_link()) . '">';
+        echo sprintf(_n('%s Comment', '%s Comments', $comments_count, 'westpace-material'), $comments_count);
+        echo '</a>';
         echo '</span>';
     }
     
@@ -195,32 +56,54 @@ function westpace_post_meta() {
 }
 
 /**
+ * Display post tags
+ */
+function westpace_post_tags() {
+    $tags = get_the_tag_list();
+    if ($tags) {
+        echo '<div class="post-tags">';
+        echo '<span class="tags-label">';
+        echo '<span class="material-icons">local_offer</span>';
+        echo __('Tags:', 'westpace-material');
+        echo '</span>';
+        echo '<span class="tags-list">' . $tags . '</span>';
+        echo '</div>';
+    }
+}
+
+/**
  * Display post navigation
  */
 function westpace_post_navigation() {
-    $previous_post = get_previous_post();
+    $prev_post = get_previous_post();
     $next_post = get_next_post();
     
-    if (!$previous_post && !$next_post) {
+    if (!$prev_post && !$next_post) {
         return;
     }
     
-    echo '<nav class="post-navigation" aria-label="' . esc_attr__('Post Navigation', 'westpace-material') . '">';
+    echo '<nav class="post-navigation" aria-label="' . __('Post navigation', 'westpace-material') . '">';
     echo '<div class="nav-links">';
     
-    if ($previous_post) {
+    if ($prev_post) {
         echo '<div class="nav-previous">';
-        echo '<a href="' . esc_url(get_permalink($previous_post)) . '" class="nav-link">';
-        echo '<span class="nav-label">' . __('Previous Post', 'westpace-material') . '</span>';
-        echo '<span class="nav-title">' . esc_html(get_the_title($previous_post)) . '</span>';
+        echo '<a href="' . esc_url(get_permalink($prev_post)) . '" class="nav-link material-card elevation-1">';
+        echo '<span class="nav-direction">';
+        echo '<span class="material-icons">arrow_back</span>';
+        echo __('Previous Post', 'westpace-material');
+        echo '</span>';
+        echo '<span class="nav-title">' . esc_html(get_the_title($prev_post)) . '</span>';
         echo '</a>';
         echo '</div>';
     }
     
     if ($next_post) {
         echo '<div class="nav-next">';
-        echo '<a href="' . esc_url(get_permalink($next_post)) . '" class="nav-link">';
-        echo '<span class="nav-label">' . __('Next Post', 'westpace-material') . '</span>';
+        echo '<a href="' . esc_url(get_permalink($next_post)) . '" class="nav-link material-card elevation-1">';
+        echo '<span class="nav-direction">';
+        echo __('Next Post', 'westpace-material');
+        echo '<span class="material-icons">arrow_forward</span>';
+        echo '</span>';
         echo '<span class="nav-title">' . esc_html(get_the_title($next_post)) . '</span>';
         echo '</a>';
         echo '</div>';
@@ -231,112 +114,55 @@ function westpace_post_navigation() {
 }
 
 /**
- * Custom pagination
+ * Display related posts
  */
-function westpace_pagination() {
-    $pagination = paginate_links(array(
-        'type'      => 'array',
-        'prev_text' => '<span class="material-icons-round">chevron_left</span> ' . __('Previous', 'westpace-material'),
-        'next_text' => __('Next', 'westpace-material') . ' <span class="material-icons-round">chevron_right</span>',
-    ));
-
-    if (!$pagination) {
-        return;
-    }
-
-    echo '<nav class="pagination-navigation" aria-label="' . esc_attr__('Posts Navigation', 'westpace-material') . '">';
-    echo '<ul class="pagination">';
-    
-    foreach ($pagination as $key => $page_link) {
-        $class = 'page-item';
-        if (strpos($page_link, 'current') !== false) {
-            $class .= ' active';
-        }
-        if (strpos($page_link, 'prev') !== false) {
-            $class .= ' prev';
-        }
-        if (strpos($page_link, 'next') !== false) {
-            $class .= ' next';
-        }
-        
-        echo '<li class="' . esc_attr($class) . '">';
-        echo str_replace('page-numbers', 'page-link', $page_link);
-        echo '</li>';
+function westpace_related_posts($post_id = null, $limit = 3) {
+    if (!$post_id) {
+        $post_id = get_the_ID();
     }
     
-    echo '</ul>';
-    echo '</nav>';
-}
-
-/**
- * Get social media links
- */
-function westpace_get_social_links() {
-    $social_links = array(
-        'facebook'  => get_theme_mod('social_facebook', ''),
-        'twitter'   => get_theme_mod('social_twitter', ''),
-        'instagram' => get_theme_mod('social_instagram', ''),
-        'linkedin'  => get_theme_mod('social_linkedin', ''),
-        'youtube'   => get_theme_mod('social_youtube', ''),
-    );
-    
-    $social_icons = array(
-        'facebook'  => 'facebook',
-        'twitter'   => 'twitter',
-        'instagram' => 'instagram',
-        'linkedin'  => 'linkedin',
-        'youtube'   => 'youtube',
-    );
-    
-    if (array_filter($social_links)) {
-        echo '<div class="social-links">';
-        
-        foreach ($social_links as $platform => $url) {
-            if ($url) {
-                echo '<a href="' . esc_url($url) . '" class="social-link social-' . esc_attr($platform) . '" target="_blank" rel="noopener noreferrer">';
-                echo '<span class="material-icons-round">' . esc_html($social_icons[$platform]) . '</span>';
-                echo '<span class="screen-reader-text">' . esc_html(ucfirst($platform)) . '</span>';
-                echo '</a>';
-            }
-        }
-        
-        echo '</div>';
-    }
-}
-
-/**
- * Display featured products (if WooCommerce is active)
- */
-function westpace_featured_products($limit = 4) {
-    if (!class_exists('WooCommerce')) {
+    $categories = wp_get_post_categories($post_id);
+    if (!$categories) {
         return;
     }
     
     $args = array(
-        'post_type'      => 'product',
+        'category__in' => $categories,
+        'post__not_in' => array($post_id),
         'posts_per_page' => $limit,
-        'meta_query'     => array(
-            array(
-                'key'   => '_featured',
-                'value' => 'yes'
-            )
-        )
+        'post_status' => 'publish',
+        'orderby' => 'rand'
     );
     
-    $featured_products = new WP_Query($args);
+    $related_posts = new WP_Query($args);
     
-    if ($featured_products->have_posts()) {
-        echo '<section class="featured-products">';
-        echo '<div class="container">';
-        echo '<h2 class="section-title">' . __('Featured Products', 'westpace-material') . '</h2>';
-        echo '<div class="products-grid">';
+    if ($related_posts->have_posts()) {
+        echo '<section class="related-posts">';
+        echo '<h3 class="related-posts-title">' . __('Related Posts', 'westpace-material') . '</h3>';
+        echo '<div class="related-posts-grid grid grid-cols-' . min($limit, 3) . '">';
         
-        while ($featured_products->have_posts()) {
-            $featured_products->the_post();
-            wc_get_template_part('content', 'product');
+        while ($related_posts->have_posts()) {
+            $related_posts->the_post();
+            echo '<article class="related-post material-card elevation-2">';
+            
+            if (has_post_thumbnail()) {
+                echo '<div class="related-post-thumbnail">';
+                echo '<a href="' . esc_url(get_permalink()) . '">';
+                the_post_thumbnail('westpace-thumbnail');
+                echo '</a>';
+                echo '</div>';
+            }
+            
+            echo '<div class="related-post-content">';
+            echo '<h4 class="related-post-title">';
+            echo '<a href="' . esc_url(get_permalink()) . '">' . get_the_title() . '</a>';
+            echo '</h4>';
+            echo '<p class="related-post-excerpt">' . wp_trim_words(get_the_excerpt(), 15) . '</p>';
+            echo '</div>';
+            
+            echo '</article>';
         }
         
-        echo '</div>';
         echo '</div>';
         echo '</section>';
         
@@ -345,185 +171,349 @@ function westpace_featured_products($limit = 4) {
 }
 
 /**
- * Get reading time estimate
+ * Display post thumbnail with fallback
  */
-function westpace_get_reading_time($post_id = null) {
+function westpace_post_thumbnail($size = 'westpace-featured', $class = 'post-thumbnail') {
+    if (has_post_thumbnail()) {
+        echo '<div class="' . esc_attr($class) . '">';
+        the_post_thumbnail($size);
+        echo '</div>';
+    } else {
+        echo '<div class="' . esc_attr($class) . ' placeholder-thumbnail">';
+        echo '<div class="placeholder-content">';
+        echo '<span class="material-icons">image</span>';
+        echo '</div>';
+        echo '</div>';
+    }
+}
+
+/**
+ * Display search form
+ */
+function westpace_search_form() {
+    ?>
+    <form role="search" method="get" class="search-form" action="<?php echo esc_url(home_url('/')); ?>">
+        <div class="search-form-group">
+            <label for="search-field" class="screen-reader-text"><?php _e('Search for:', 'westpace-material'); ?></label>
+            <input type="search" id="search-field" class="search-field form-control" placeholder="<?php _e('Search...', 'westpace-material'); ?>" value="<?php echo get_search_query(); ?>" name="s" />
+            <button type="submit" class="search-submit btn btn-primary">
+                <span class="material-icons">search</span>
+                <span class="screen-reader-text"><?php _e('Search', 'westpace-material'); ?></span>
+            </button>
+        </div>
+    </form>
+    <?php
+}
+
+/**
+ * Display social sharing buttons
+ */
+function westpace_social_share($post_id = null) {
+    if (!$post_id) {
+        $post_id = get_the_ID();
+    }
+    
+    $title = get_the_title($post_id);
+    $url = get_permalink($post_id);
+    $excerpt = wp_trim_words(get_the_excerpt($post_id), 20);
+    
+    echo '<div class="social-share">';
+    echo '<h4 class="social-share-title">' . __('Share this post:', 'westpace-material') . '</h4>';
+    echo '<div class="social-share-buttons">';
+    
+    // Facebook
+    echo '<a href="https://www.facebook.com/sharer/sharer.php?u=' . urlencode($url) . '" target="_blank" rel="noopener" class="social-share-button facebook" aria-label="' . __('Share on Facebook', 'westpace-material') . '">';
+    echo '<span class="material-icons">facebook</span>';
+    echo '</a>';
+    
+    // Twitter
+    echo '<a href="https://twitter.com/intent/tweet?url=' . urlencode($url) . '&text=' . urlencode($title) . '" target="_blank" rel="noopener" class="social-share-button twitter" aria-label="' . __('Share on Twitter', 'westpace-material') . '">';
+    echo '<span class="material-icons">telegram</span>';
+    echo '</a>';
+    
+    // LinkedIn
+    echo '<a href="https://www.linkedin.com/shareArticle?mini=true&url=' . urlencode($url) . '&title=' . urlencode($title) . '&summary=' . urlencode($excerpt) . '" target="_blank" rel="noopener" class="social-share-button linkedin" aria-label="' . __('Share on LinkedIn', 'westpace-material') . '">';
+    echo '<span class="material-icons">business</span>';
+    echo '</a>';
+    
+    // Email
+    echo '<a href="mailto:?subject=' . urlencode($title) . '&body=' . urlencode($url) . '" class="social-share-button email" aria-label="' . __('Share via Email', 'westpace-material') . '">';
+    echo '<span class="material-icons">email</span>';
+    echo '</a>';
+    
+    echo '</div>';
+    echo '</div>';
+}
+
+/**
+ * Display reading time estimate
+ */
+function westpace_reading_time($post_id = null) {
     if (!$post_id) {
         $post_id = get_the_ID();
     }
     
     $content = get_post_field('post_content', $post_id);
     $word_count = str_word_count(strip_tags($content));
-    $reading_time = ceil($word_count / 200); // Average reading speed: 200 words per minute
+    $reading_time = ceil($word_count / 200); // Average reading speed of 200 words per minute
     
-    if ($reading_time === 1) {
-        return __('1 min read', 'westpace-material');
-    } else {
-        return sprintf(__('%d min read', 'westpace-material'), $reading_time);
-    }
+    echo '<span class="reading-time meta-item">';
+    echo '<span class="material-icons">schedule</span>';
+    echo sprintf(_n('%d min read', '%d min read', $reading_time, 'westpace-material'), $reading_time);
+    echo '</span>';
 }
 
 /**
- * Custom comment callback
+ * Display author bio
  */
-function westpace_comment_callback($comment, $args, $depth) {
-    $tag = ('div' === $args['style']) ? 'div' : 'li';
-    
-    echo '<' . $tag . ' id="comment-' . get_comment_ID() . '" class="comment-item">';
-    
-    echo '<div class="comment-body">';
-    echo '<div class="comment-author">';
-    echo get_avatar($comment, 48, '', '', array('class' => 'avatar'));
-    echo '<cite class="fn">' . get_comment_author_link() . '</cite>';
-    echo '<span class="comment-date">' . get_comment_date() . '</span>';
-    echo '</div>';
-    
-    if ('0' == $comment->comment_approved) {
-        echo '<p class="comment-awaiting-moderation">' . __('Your comment is awaiting moderation.', 'westpace-material') . '</p>';
+function westpace_author_bio($author_id = null) {
+    if (!$author_id) {
+        $author_id = get_the_author_meta('ID');
     }
     
-    echo '<div class="comment-content">';
-    comment_text();
-    echo '</div>';
+    $author_description = get_the_author_meta('description', $author_id);
+    if (!$author_description) {
+        return;
+    }
     
-    echo '<div class="comment-meta">';
-    comment_reply_link(array_merge($args, array(
-        'depth'     => $depth,
-        'max_depth' => $args['max_depth'],
-        'reply_text' => __('Reply', 'westpace-material'),
-    )));
-    edit_comment_link(__('Edit', 'westpace-material'));
+    echo '<div class="author-bio material-card elevation-1">';
+    echo '<div class="author-bio-avatar">';
+    echo get_avatar($author_id, 80);
     echo '</div>';
+    echo '<div class="author-bio-content">';
+    echo '<h4 class="author-bio-name">' . get_the_author_meta('display_name', $author_id) . '</h4>';
+    echo '<p class="author-bio-description">' . esc_html($author_description) . '</p>';
     
+    $author_website = get_the_author_meta('user_url', $author_id);
+    if ($author_website) {
+        echo '<a href="' . esc_url($author_website) . '" class="author-bio-website btn btn-outline btn-sm" target="_blank" rel="noopener">';
+        echo '<span class="material-icons">language</span>';
+        echo __('Visit Website', 'westpace-material');
+        echo '</a>';
+    }
+    
+    echo '</div>';
     echo '</div>';
 }
 
 /**
- * Get theme colors for use in templates
- */
-function westpace_get_theme_colors() {
-    return array(
-        'primary'   => get_theme_mod('westpace_primary_color', '#1976D2'),
-        'secondary' => get_theme_mod('westpace_secondary_color', '#FF6D00'),
-        'text'      => get_theme_mod('westpace_text_color', '#0F172A'),
-        'background' => get_theme_mod('westpace_background_color', '#FFFFFF'),
-    );
-}
-
-/**
- * Check if we're on a WooCommerce page
- */
-function westpace_is_woocommerce_page() {
-    if (!class_exists('WooCommerce')) {
-        return false;
-    }
-    
-    return is_woocommerce() || is_cart() || is_checkout() || is_account_page();
-}
-
-/**
- * Get the appropriate sidebar for current page
- */
-function westpace_get_sidebar() {
-    $sidebar = 'sidebar-1';
-    
-    if (westpace_is_woocommerce_page()) {
-        $sidebar = 'shop-sidebar';
-    }
-    
-    return apply_filters('westpace_sidebar', $sidebar);
-}
-
-/**
- * Check if sidebar should be displayed
- */
-function westpace_has_sidebar() {
-    $sidebar_position = get_theme_mod('sidebar_position', 'right');
-    
-    if ($sidebar_position === 'none') {
-        return false;
-    }
-    
-    if (is_front_page() || is_page_template('page-fullwidth.php')) {
-        return false;
-    }
-    
-    return is_active_sidebar(westpace_get_sidebar());
-}
-
-/**
- * Get body classes for layout
- */
-function westpace_body_classes($classes) {
-    $sidebar_position = get_theme_mod('sidebar_position', 'right');
-    
-    if (westpace_has_sidebar()) {
-        $classes[] = 'has-sidebar';
-        $classes[] = 'sidebar-' . $sidebar_position;
-    } else {
-        $classes[] = 'no-sidebar';
-    }
-    
-    if (westpace_is_woocommerce_page()) {
-        $classes[] = 'woocommerce-page';
-    }
-    
-    return $classes;
-}
-add_filter('body_class', 'westpace_body_classes');
-
-/**
- * Newsletter signup form
+ * Display newsletter signup form
  */
 function westpace_newsletter_form() {
     ?>
-    <form class="newsletter-form" data-action="westpace_newsletter">
-        <div class="newsletter-input-group">
-            <input type="email" 
-                   name="email" 
-                   placeholder="<?php esc_attr_e('Enter your email', 'westpace-material'); ?>" 
-                   required>
-            <button type="submit" class="btn btn-primary">
-                <span class="material-icons-round">mail</span>
-                <?php esc_html_e('Subscribe', 'westpace-material'); ?>
-            </button>
+    <div class="newsletter-signup material-card elevation-2">
+        <div class="newsletter-content">
+            <h3 class="newsletter-title"><?php _e('Stay Updated', 'westpace-material'); ?></h3>
+            <p class="newsletter-description"><?php _e('Subscribe to our newsletter for the latest updates and news.', 'westpace-material'); ?></p>
+            
+            <form class="newsletter-form" id="newsletter-form">
+                <div class="form-group">
+                    <label for="newsletter-email" class="screen-reader-text"><?php _e('Email Address', 'westpace-material'); ?></label>
+                    <input type="email" id="newsletter-email" name="email" class="form-control" placeholder="<?php _e('Enter your email', 'westpace-material'); ?>" required>
+                </div>
+                <button type="submit" class="btn btn-primary newsletter-submit">
+                    <span class="material-icons">send</span>
+                    <?php _e('Subscribe', 'westpace-material'); ?>
+                </button>
+            </form>
+            
+            <div class="newsletter-message" id="newsletter-message"></div>
         </div>
-        <p class="newsletter-message"></p>
-    </form>
+    </div>
     <?php
 }
 
 /**
- * Contact form
+ * Display page header
  */
-function westpace_contact_form() {
+function westpace_page_header($title = null, $subtitle = null, $background_image = null) {
+    if (!$title) {
+        $title = get_the_title();
+    }
+    
+    echo '<header class="page-header"';
+    if ($background_image) {
+        echo ' style="background-image: url(' . esc_url($background_image) . ');"';
+    }
+    echo '>';
+    echo '<div class="page-header-content">';
+    echo '<div class="container">';
+    
+    // Breadcrumb
+    westpace_breadcrumb();
+    
+    echo '<h1 class="page-title">' . esc_html($title) . '</h1>';
+    
+    if ($subtitle) {
+        echo '<p class="page-subtitle">' . esc_html($subtitle) . '</p>';
+    }
+    
+    echo '</div>';
+    echo '</div>';
+    echo '</header>';
+}
+
+/**
+ * Display archive header
+ */
+function westpace_archive_header() {
+    if (is_category()) {
+        $title = single_cat_title('', false);
+        $description = category_description();
+    } elseif (is_tag()) {
+        $title = single_tag_title('', false);
+        $description = tag_description();
+    } elseif (is_author()) {
+        $title = get_the_author();
+        $description = get_the_author_meta('description');
+    } elseif (is_date()) {
+        if (is_year()) {
+            $title = get_the_date('Y');
+        } elseif (is_month()) {
+            $title = get_the_date('F Y');
+        } else {
+            $title = get_the_date();
+        }
+        $description = '';
+    } else {
+        $title = get_the_archive_title();
+        $description = get_the_archive_description();
+    }
+    
+    echo '<header class="archive-header">';
+    echo '<div class="container">';
+    
+    westpace_breadcrumb();
+    
+    echo '<h1 class="archive-title">' . esc_html($title) . '</h1>';
+    
+    if ($description) {
+        echo '<div class="archive-description">' . wp_kses_post($description) . '</div>';
+    }
+    
+    echo '</div>';
+    echo '</header>';
+}
+
+/**
+ * Display 404 error content
+ */
+function westpace_404_content() {
     ?>
-    <form class="contact-form material-card" data-action="westpace_contact_form">
-        <div class="form-row">
-            <div class="form-group">
-                <label for="contact-name"><?php esc_html_e('Name', 'westpace-material'); ?> *</label>
-                <input type="text" id="contact-name" name="name" required>
-            </div>
-            <div class="form-group">
-                <label for="contact-email"><?php esc_html_e('Email', 'westpace-material'); ?> *</label>
-                <input type="email" id="contact-email" name="email" required>
-            </div>
+    <div class="error-404-content">
+        <div class="error-404-icon">
+            <span class="material-icons">error_outline</span>
         </div>
-        <div class="form-group">
-            <label for="contact-subject"><?php esc_html_e('Subject', 'westpace-material'); ?></label>
-            <input type="text" id="contact-subject" name="subject">
-        </div>
-        <div class="form-group">
-            <label for="contact-message"><?php esc_html_e('Message', 'westpace-material'); ?> *</label>
-            <textarea id="contact-message" name="message" rows="5" required></textarea>
-        </div>
-        <div class="form-actions">
-            <button type="submit" class="btn btn-primary btn-lg">
-                <span class="material-icons-round">send</span>
-                <?php esc_html_e('Send Message', 'westpace-material'); ?>
+        <h1 class="error-404-title"><?php _e('Page Not Found', 'westpace-material'); ?></h1>
+        <p class="error-404-message"><?php _e('Sorry, the page you are looking for could not be found.', 'westpace-material'); ?></p>
+        
+        <div class="error-404-actions">
+            <a href="<?php echo esc_url(home_url('/')); ?>" class="btn btn-primary">
+                <span class="material-icons">home</span>
+                <?php _e('Go Home', 'westpace-material'); ?>
+            </a>
+            
+            <button onclick="history.back()" class="btn btn-outline">
+                <span class="material-icons">arrow_back</span>
+                <?php _e('Go Back', 'westpace-material'); ?>
             </button>
         </div>
-        <p class="contact-message"></p>
-    </form>
+        
+        <div class="error-404-search">
+            <h3><?php _e('Search our site:', 'westpace-material'); ?></h3>
+            <?php westpace_search_form(); ?>
+        </div>
+        
+        <div class="error-404-recent">
+            <h3><?php _e('Recent Posts:', 'westpace-material'); ?></h3>
+            <?php
+            $recent_posts = new WP_Query(array(
+                'posts_per_page' => 5,
+                'post_status' => 'publish'
+            ));
+            
+            if ($recent_posts->have_posts()) {
+                echo '<ul class="recent-posts-list">';
+                while ($recent_posts->have_posts()) {
+                    $recent_posts->the_post();
+                    echo '<li><a href="' . esc_url(get_permalink()) . '">' . get_the_title() . '</a></li>';
+                }
+                echo '</ul>';
+                wp_reset_postdata();
+            }
+            ?>
+        </div>
+    </div>
     <?php
+}
+
+/**
+ * Display loading spinner
+ */
+function westpace_loading_spinner($text = null) {
+    if (!$text) {
+        $text = __('Loading...', 'westpace-material');
+    }
+    
+    echo '<div class="loading-spinner">';
+    echo '<div class="spinner"></div>';
+    echo '<span class="loading-text">' . esc_html($text) . '</span>';
+    echo '</div>';
+}
+
+/**
+ * Format phone number for display
+ */
+function westpace_format_phone($phone) {
+    $phone = preg_replace('/[^0-9]/', '', $phone);
+    
+    if (strlen($phone) == 10) {
+        return preg_replace('/(\d{3})(\d{3})(\d{4})/', '($1) $2-$3', $phone);
+    } elseif (strlen($phone) == 11) {
+        return preg_replace('/(\d{1})(\d{3})(\d{3})(\d{4})/', '$1 ($2) $3-$4', $phone);
+    }
+    
+    return $phone;
+}
+
+/**
+ * Get theme color
+ */
+function westpace_get_theme_color($color_name, $default = '') {
+    return get_theme_mod('westpace_' . $color_name, $default);
+}
+
+/**
+ * Check if dark mode is enabled
+ */
+function westpace_is_dark_mode() {
+    return get_theme_mod('enable_dark_mode', false);
+}
+
+/**
+ * Display back to top button
+ */
+function westpace_back_to_top() {
+    echo '<button id="back-to-top" class="back-to-top-button" aria-label="' . __('Back to top', 'westpace-material') . '">';
+    echo '<span class="material-icons">keyboard_arrow_up</span>';
+    echo '</button>';
+}
+
+/**
+ * Display cookie notice (GDPR compliance)
+ */
+function westpace_cookie_notice() {
+    if (get_theme_mod('enable_cookie_notice', false)) {
+        ?>
+        <div id="cookie-notice" class="cookie-notice" style="display: none;">
+            <div class="cookie-notice-content">
+                <p><?php echo esc_html(get_theme_mod('cookie_notice_text', __('This website uses cookies to improve your experience.', 'westpace-material'))); ?></p>
+                <div class="cookie-notice-actions">
+                    <button id="accept-cookies" class="btn btn-primary btn-sm"><?php _e('Accept', 'westpace-material'); ?></button>
+                    <button id="decline-cookies" class="btn btn-outline btn-sm"><?php _e('Decline', 'westpace-material'); ?></button>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
 }
