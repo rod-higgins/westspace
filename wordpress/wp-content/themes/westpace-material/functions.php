@@ -2,6 +2,7 @@
 /**
  * Westpace Material Design Enhanced Theme Functions
  * Modern, secure, and performance-optimized WordPress theme functions
+ * With comprehensive WooCommerce integration
  * 
  * @package Westpace_Material
  * @version 3.0.0
@@ -38,18 +39,13 @@ function westpace_setup() {
 
     // Add support for core custom logo
     add_theme_support('custom-logo', array(
-        'height'      => 250,
-        'width'       => 250,
+        'height'      => 60,
+        'width'       => 240,
         'flex-width'  => true,
         'flex-height' => true,
     ));
 
-    // Add theme support for custom background
-    add_theme_support('custom-background', array(
-        'default-color' => 'ffffff',
-    ));
-
-    // Add support for HTML5 markup
+    // HTML5 support
     add_theme_support('html5', array(
         'search-form',
         'comment-form',
@@ -60,45 +56,46 @@ function westpace_setup() {
         'script',
     ));
 
-    // Add support for custom header
-    add_theme_support('custom-header', array(
-        'default-image'      => '',
-        'default-text-color' => '000',
-        'width'              => 1200,
-        'height'             => 400,
-        'flex-height'        => true,
-        'wp-head-callback'   => 'westpace_header_style',
-    ));
-
-    // Add support for editor styles
+    // Editor styles
     add_theme_support('editor-styles');
     add_editor_style('assets/css/editor-style.css');
 
-    // Add support for wide and full-width blocks
-    add_theme_support('align-wide');
-
-    // Add support for responsive embedded content
+    // Responsive embeds
     add_theme_support('responsive-embeds');
+
+    // Block patterns
+    add_theme_support('core-block-patterns');
+
+    // Custom background
+    add_theme_support('custom-background', array(
+        'default-color' => 'ffffff',
+    ));
 
     // Register navigation menus
     register_nav_menus(array(
-        'primary' => __('Primary Menu', 'westpace-material'),
-        'footer'  => __('Footer Menu', 'westpace-material'),
-        'mobile'  => __('Mobile Menu', 'westpace-material'),
+        'primary' => esc_html__('Primary Menu', 'westpace-material'),
+        'footer'  => esc_html__('Footer Menu', 'westpace-material'),
+        'mobile'  => esc_html__('Mobile Menu', 'westpace-material'),
     ));
 
-    // Add image sizes
-    add_image_size('westpace-featured', 800, 500, true);
-    add_image_size('westpace-portfolio', 600, 400, true);
-    add_image_size('westpace-thumbnail', 300, 300, true);
-
     // WooCommerce support
-    if (class_exists('WooCommerce')) {
-        add_theme_support('woocommerce');
-        add_theme_support('wc-product-gallery-zoom');
-        add_theme_support('wc-product-gallery-lightbox');
-        add_theme_support('wc-product-gallery-slider');
-    }
+    add_theme_support('woocommerce', array(
+        'thumbnail_image_width' => 300,
+        'single_image_width'    => 600,
+        'product_grid'          => array(
+            'default_rows'    => 3,
+            'min_rows'        => 2,
+            'max_rows'        => 8,
+            'default_columns' => 3,
+            'min_columns'     => 2,
+            'max_columns'     => 4,
+        ),
+    ));
+
+    // WooCommerce gallery support
+    add_theme_support('wc-product-gallery-zoom');
+    add_theme_support('wc-product-gallery-lightbox');
+    add_theme_support('wc-product-gallery-slider');
 }
 add_action('after_setup_theme', 'westpace_setup');
 
@@ -114,11 +111,11 @@ add_action('after_setup_theme', 'westpace_content_width', 0);
  * Register widget areas
  */
 function westpace_widgets_init() {
-    // Primary sidebar
+    // Main sidebar
     register_sidebar(array(
-        'name'          => __('Primary Sidebar', 'westpace-material'),
+        'name'          => esc_html__('Main Sidebar', 'westpace-material'),
         'id'            => 'sidebar-1',
-        'description'   => __('Add widgets here to appear in your primary sidebar.', 'westpace-material'),
+        'description'   => esc_html__('Add widgets here to appear in your sidebar.', 'westpace-material'),
         'before_widget' => '<section id="%1$s" class="widget material-card elevation-2 %2$s">',
         'after_widget'  => '</section>',
         'before_title'  => '<h3 class="widget-title">',
@@ -234,9 +231,7 @@ function westpace_pagination() {
         'end_size'  => 1,
         'prev_text' => '<span class="material-icons">chevron_left</span>' . __('Previous', 'westpace-material'),
         'next_text' => __('Next', 'westpace-material') . '<span class="material-icons">chevron_right</span>',
-        'type'      => 'plain',
-        'before_page_number' => '<li>',
-        'after_page_number'  => '</li>',
+        'type'      => 'list',
     ));
 
     echo '</ul>';
@@ -244,57 +239,38 @@ function westpace_pagination() {
 }
 
 /**
- * Header style
- */
-function westpace_header_style() {
-    $header_text_color = get_header_textcolor();
-
-    if (!display_header_text()) {
-        $style = 'style="display: none;"';
-    } else {
-        $style = 'style="color: #' . esc_attr($header_text_color) . ';"';
-    }
-
-    return $style;
-}
-
-/**
- * Custom logo function
- */
-function westpace_the_custom_logo() {
-    if (function_exists('the_custom_logo')) {
-        the_custom_logo();
-    }
-}
-
-/**
- * Site title and description
- */
-function westpace_site_title() {
-    if (is_front_page() && is_home()) {
-        echo '<h1 class="site-title"><a href="' . esc_url(home_url('/')) . '" rel="home">' . get_bloginfo('name') . '</a></h1>';
-    } else {
-        echo '<p class="site-title"><a href="' . esc_url(home_url('/')) . '" rel="home">' . get_bloginfo('name') . '</a></p>';
-    }
-    
-    $description = get_bloginfo('description', 'display');
-    if ($description || is_customize_preview()) {
-        echo '<p class="site-description">' . $description . '</p>';
-    }
-}
-
-/**
- * Breadcrumb function
+ * Custom breadcrumb function
  */
 function westpace_breadcrumb() {
     if (is_front_page()) return;
 
-    echo '<nav class="breadcrumb" aria-label="' . __('Breadcrumb', 'westpace-material') . '">';
-    echo '<ol class="breadcrumb-list">';
-    
+    echo '<nav class="breadcrumb-nav" aria-label="' . __('Breadcrumb', 'westpace-material') . '">';
+    echo '<ol class="breadcrumb">';
     echo '<li class="breadcrumb-item"><a href="' . esc_url(home_url('/')) . '">' . __('Home', 'westpace-material') . '</a></li>';
 
-    if (is_category()) {
+    if (class_exists('WooCommerce') && is_woocommerce()) {
+        if (is_shop()) {
+            echo '<li class="breadcrumb-item active">' . get_the_title(wc_get_page_id('shop')) . '</li>';
+        } elseif (is_product_category() || is_product_tag()) {
+            $current_term = $GLOBALS['wp_query']->get_queried_object();
+            if (is_product_category()) {
+                echo '<li class="breadcrumb-item"><a href="' . esc_url(wc_get_page_permalink('shop')) . '">' . get_the_title(wc_get_page_id('shop')) . '</a></li>';
+                if ($current_term->parent) {
+                    $parent = get_term($current_term->parent, 'product_cat');
+                    echo '<li class="breadcrumb-item"><a href="' . esc_url(get_term_link($parent)) . '">' . esc_html($parent->name) . '</a></li>';
+                }
+            }
+            echo '<li class="breadcrumb-item active">' . esc_html($current_term->name) . '</li>';
+        } elseif (is_product()) {
+            echo '<li class="breadcrumb-item"><a href="' . esc_url(wc_get_page_permalink('shop')) . '">' . get_the_title(wc_get_page_id('shop')) . '</a></li>';
+            $product_cats = wp_get_post_terms(get_the_ID(), 'product_cat');
+            if ($product_cats) {
+                $cat = $product_cats[0];
+                echo '<li class="breadcrumb-item"><a href="' . esc_url(get_term_link($cat)) . '">' . esc_html($cat->name) . '</a></li>';
+            }
+            echo '<li class="breadcrumb-item active">' . get_the_title() . '</li>';
+        }
+    } elseif (is_category()) {
         $category = get_category(get_query_var('cat'));
         if ($category->parent != 0) {
             $parent_category = get_category($category->parent);
@@ -351,44 +327,352 @@ foreach ($include_files as $file) {
 }
 
 /**
- * WooCommerce compatibility
+ * ==========================================
+ * COMPREHENSIVE WOOCOMMERCE INTEGRATION
+ * ==========================================
  */
+
 if (class_exists('WooCommerce')) {
-    // Remove default WooCommerce styles
+
+    /**
+     * Remove default WooCommerce styles
+     */
     add_filter('woocommerce_enqueue_styles', '__return_empty_array');
+
+    /**
+     * WooCommerce Theme Support Declaration
+     */
+    function westpace_woocommerce_support() {
+        add_theme_support('woocommerce');
+        add_theme_support('wc-product-gallery-zoom');
+        add_theme_support('wc-product-gallery-lightbox');
+        add_theme_support('wc-product-gallery-slider');
+    }
+    add_action('after_setup_theme', 'westpace_woocommerce_support');
+
+    /**
+     * Customize WooCommerce settings
+     */
     
     // Change number of products per page
     function westpace_woocommerce_products_per_page() {
         return get_theme_mod('woocommerce_products_per_page', 12);
     }
     add_filter('loop_shop_per_page', 'westpace_woocommerce_products_per_page', 20);
-    
+
     // Change number of product columns
     function westpace_woocommerce_loop_columns() {
         return get_theme_mod('woocommerce_product_columns', 3);
     }
     add_filter('woocommerce_loop_columns', 'westpace_woocommerce_loop_columns');
-    
-    // Customize add to cart button
+
+    // Change number of related products
+    function westpace_related_products_args($args) {
+        $args['posts_per_page'] = 4;
+        $args['columns'] = 4;
+        return $args;
+    }
+    add_filter('woocommerce_output_related_products_args', 'westpace_related_products_args');
+
+    // Change number of upsells
+    function westpace_upsell_display() {
+        woocommerce_upsell_display(4, 4);
+    }
+    remove_action('woocommerce_after_single_product_summary', 'woocommerce_upsell_display', 15);
+    add_action('woocommerce_after_single_product_summary', 'westpace_upsell_display', 15);
+
+    // Change number of cross-sells
+    function westpace_cross_sell_display() {
+        woocommerce_cross_sell_display(4, 4);
+    }
+    remove_action('woocommerce_cart_collaterals', 'woocommerce_cross_sell_display');
+    add_action('woocommerce_cart_collaterals', 'westpace_cross_sell_display');
+
+    /**
+     * Customize add to cart button
+     */
     function westpace_woocommerce_loop_add_to_cart_button($button, $product) {
-        $args = array(
-            'quantity' => 1,
-            'class' => 'button',
-            'attributes' => array(),
-        );
+        $button_text = $product->add_to_cart_text();
+        $button_class = 'add-to-cart-btn btn btn-primary';
         
+        if ($product->is_type('simple') && $product->is_purchasable() && $product->is_in_stock()) {
+            $button_class .= ' ajax_add_to_cart';
+        }
+
         $button = sprintf(
-            '<a href="%s" data-quantity="%s" class="%s btn btn-primary" %s>%s</a>',
+            '<a href="%s" data-quantity="1" class="%s" data-product_id="%s" data-product_sku="%s" aria-label="%s" rel="nofollow">
+                <span class="btn-text">%s</span>
+                <span class="btn-icon material-icons">add_shopping_cart</span>
+            </a>',
             esc_url($product->add_to_cart_url()),
-            esc_attr(isset($args['quantity']) ? $args['quantity'] : 1),
-            esc_attr(isset($args['class']) ? $args['class'] : 'button'),
-            isset($args['attributes']) ? wc_implode_html_attributes($args['attributes']) : '',
-            esc_html($product->add_to_cart_text())
+            esc_attr($button_class),
+            esc_attr($product->get_id()),
+            esc_attr($product->get_sku()),
+            esc_attr($button_text),
+            esc_html($button_text)
         );
+
         return $button;
     }
     add_filter('woocommerce_loop_add_to_cart_link', 'westpace_woocommerce_loop_add_to_cart_button', 10, 2);
-}
+
+    /**
+     * Enhanced Cart Fragments for AJAX
+     */
+    function westpace_cart_count_fragments($fragments) {
+        $fragments['span.cart-count'] = '<span class="cart-count">' . WC()->cart->get_cart_contents_count() . '</span>';
+        $fragments['.cart-total'] = '<span class="cart-total">' . WC()->cart->get_cart_subtotal() . '</span>';
+        return $fragments;
+    }
+    add_filter('woocommerce_add_to_cart_fragments', 'westpace_cart_count_fragments');
+
+    /**
+     * Custom single product layout
+     */
+    function westpace_single_product_summary() {
+        echo '<div class="product-summary-wrapper">';
+    }
+    add_action('woocommerce_single_product_summary', 'westpace_single_product_summary', 1);
+
+    function westpace_single_product_summary_end() {
+        echo '</div>';
+    }
+    add_action('woocommerce_single_product_summary', 'westpace_single_product_summary_end', 65);
+
+    /**
+     * Add custom product badges
+     */
+    function westpace_product_badges() {
+        global $product;
+        
+        $badges = array();
+        
+        // New product badge (products newer than 30 days)
+        $created = strtotime($product->get_date_created());
+        if ((time() - $created) < (30 * 24 * 60 * 60)) {
+            $badges[] = '<span class="product-badge badge-new">' . __('New', 'westpace-material') . '</span>';
+        }
+        
+        // Featured product badge
+        if ($product->is_featured()) {
+            $badges[] = '<span class="product-badge badge-featured">' . __('Featured', 'westpace-material') . '</span>';
+        }
+        
+        // Low stock badge
+        if ($product->is_in_stock() && $product->get_stock_quantity() && $product->get_stock_quantity() <= 5) {
+            $badges[] = '<span class="product-badge badge-low-stock">' . __('Low Stock', 'westpace-material') . '</span>';
+        }
+        
+        if (!empty($badges)) {
+            echo '<div class="product-badges">' . implode('', $badges) . '</div>';
+        }
+    }
+    add_action('woocommerce_before_shop_loop_item_title', 'westpace_product_badges', 15);
+
+    /**
+     * Recently viewed products
+     */
+    function westpace_track_product_view() {
+        if (!is_singular('product')) {
+            return;
+        }
+
+        global $post;
+        if (empty($_COOKIE['woocommerce_recently_viewed'])) {
+            $viewed_products = array();
+        } else {
+            $viewed_products = (array) explode('|', $_COOKIE['woocommerce_recently_viewed']);
+        }
+
+        if (!in_array($post->ID, $viewed_products)) {
+            $viewed_products[] = $post->ID;
+        }
+
+        if (count($viewed_products) > 15) {
+            array_shift($viewed_products);
+        }
+
+        wc_setcookie('woocommerce_recently_viewed', implode('|', $viewed_products));
+    }
+    add_action('template_redirect', 'westpace_track_product_view', 20);
+
+    function westpace_recently_viewed_products($number = 5) {
+        if (empty($_COOKIE['woocommerce_recently_viewed'])) {
+            return;
+        }
+
+        $viewed_products = (array) explode('|', $_COOKIE['woocommerce_recently_viewed']);
+        $viewed_products = array_reverse(array_filter(array_map('absint', $viewed_products)));
+
+        if (empty($viewed_products)) {
+            return;
+        }
+
+        $query_args = array(
+            'posts_per_page' => $number,
+            'no_found_rows'  => 1,
+            'post_status'    => 'publish',
+            'post_type'      => 'product',
+            'post__in'       => $viewed_products,
+            'orderby'        => 'post__in',
+        );
+
+        $products = new WP_Query($query_args);
+
+        if ($products->have_posts()) {
+            echo '<div class="recently-viewed-products">';
+            echo '<h3>' . __('Recently Viewed Products', 'westpace-material') . '</h3>';
+            echo '<ul class="products columns-' . $number . '">';
+            
+            while ($products->have_posts()) {
+                $products->the_post();
+                wc_get_template_part('content', 'product');
+            }
+            
+            echo '</ul>';
+            echo '</div>';
+        }
+
+        wp_reset_postdata();
+    }
+
+    /**
+     * Custom checkout fields
+     */
+    function westpace_checkout_fields($fields) {
+        // Add phone number field
+        $fields['billing']['billing_phone']['class'] = array('form-row-wide');
+        $fields['billing']['billing_phone']['priority'] = 100;
+        
+        // Make email field wider
+        $fields['billing']['billing_email']['class'] = array('form-row-wide');
+        
+        return $fields;
+    }
+    add_filter('woocommerce_checkout_fields', 'westpace_checkout_fields');
+
+    /**
+     * Add estimated delivery date
+     */
+    function westpace_estimated_delivery() {
+        $estimated_date = date('M j, Y', strtotime('+3 days'));
+        echo '<div class="estimated-delivery">';
+        echo '<span class="material-icons">local_shipping</span>';
+        echo '<span>' . sprintf(__('Estimated delivery: %s', 'westpace-material'), $estimated_date) . '</span>';
+        echo '</div>';
+    }
+    add_action('woocommerce_single_product_summary', 'westpace_estimated_delivery', 25);
+
+    /**
+     * Product share buttons
+     */
+    function westpace_product_share() {
+        global $product;
+        
+        $product_title = get_the_title();
+        $product_url = get_permalink();
+        $product_image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full');
+        
+        echo '<div class="product-share">';
+        echo '<h4>' . __('Share this product', 'westpace-material') . '</h4>';
+        echo '<div class="share-buttons">';
+        
+        // Facebook
+        echo '<a href="https://www.facebook.com/sharer/sharer.php?u=' . urlencode($product_url) . '" target="_blank" class="share-btn facebook" aria-label="' . __('Share on Facebook', 'westpace-material') . '">';
+        echo '<span class="share-icon">📘</span>';
+        echo '</a>';
+        
+        // Twitter
+        echo '<a href="https://twitter.com/intent/tweet?text=' . urlencode($product_title) . '&url=' . urlencode($product_url) . '" target="_blank" class="share-btn twitter" aria-label="' . __('Share on Twitter', 'westpace-material') . '">';
+        echo '<span class="share-icon">🐦</span>';
+        echo '</a>';
+        
+        // Pinterest
+        if ($product_image) {
+            echo '<a href="https://pinterest.com/pin/create/button/?url=' . urlencode($product_url) . '&media=' . urlencode($product_image[0]) . '&description=' . urlencode($product_title) . '" target="_blank" class="share-btn pinterest" aria-label="' . __('Share on Pinterest', 'westpace-material') . '">';
+            echo '<span class="share-icon">📌</span>';
+            echo '</a>';
+        }
+        
+        // WhatsApp (mobile)
+        echo '<a href="https://wa.me/?text=' . urlencode($product_title . ' ' . $product_url) . '" target="_blank" class="share-btn whatsapp" aria-label="' . __('Share on WhatsApp', 'westpace-material') . '">';
+        echo '<span class="share-icon">💬</span>';
+        echo '</a>';
+        
+        echo '</div>';
+        echo '</div>';
+    }
+    add_action('woocommerce_single_product_summary', 'westpace_product_share', 55);
+
+    /**
+     * Custom mini cart
+     */
+    function westpace_mini_cart() {
+        echo '<div class="mini-cart-wrapper">';
+        echo '<a href="' . esc_url(wc_get_cart_url()) . '" class="mini-cart-trigger">';
+        echo '<span class="material-icons">shopping_cart</span>';
+        echo '<span class="cart-count">' . WC()->cart->get_cart_contents_count() . '</span>';
+        echo '<span class="cart-total">' . WC()->cart->get_cart_subtotal() . '</span>';
+        echo '</a>';
+        echo '<div class="mini-cart-dropdown">';
+        echo '<div class="widget_shopping_cart_content">';
+        woocommerce_mini_cart();
+        echo '</div>';
+        echo '</div>';
+        echo '</div>';
+    }
+
+    /**
+     * Enhanced product search with AJAX
+     */
+    function westpace_ajax_product_search() {
+        check_ajax_referer('westpace_nonce', 'nonce');
+        
+        $keyword = sanitize_text_field($_POST['keyword']);
+        
+        if (strlen($keyword) < 3) {
+            wp_die();
+        }
+        
+        $args = array(
+            'post_type'      => 'product',
+            'post_status'    => 'publish',
+            'posts_per_page' => 8,
+            's'              => $keyword,
+            'meta_query'     => array(
+                array(
+                    'key'     => '_visibility',
+                    'value'   => array('catalog', 'visible'),
+                    'compare' => 'IN'
+                )
+            )
+        );
+        
+        $products = new WP_Query($args);
+        $results = array();
+        
+        if ($products->have_posts()) {
+            while ($products->have_posts()) {
+                $products->the_post();
+                global $product;
+                
+                $results[] = array(
+                    'id'    => get_the_ID(),
+                    'title' => get_the_title(),
+                    'url'   => get_permalink(),
+                    'price' => $product->get_price_html(),
+                    'image' => wp_get_attachment_image_src(get_post_thumbnail_id(), 'thumbnail')[0],
+                );
+            }
+        }
+        
+        wp_reset_postdata();
+        wp_send_json_success($results);
+    }
+    add_action('wp_ajax_westpace_product_search', 'westpace_ajax_product_search');
+    add_action('wp_ajax_nopriv_westpace_product_search', 'westpace_ajax_product_search');
+
+} // End WooCommerce integration
 
 /**
  * Security enhancements
@@ -419,59 +703,74 @@ function westpace_defer_scripts($tag, $handle, $src) {
     $defer_scripts = array('westpace-theme-js');
     
     if (in_array($handle, $defer_scripts)) {
-        return '<script src="' . $src . '" defer="defer" type="text/javascript"></script>' . "\n";
+        return '<script src="' . $src . '" defer></script>' . "\n";
     }
     
     return $tag;
 }
 add_filter('script_loader_tag', 'westpace_defer_scripts', 10, 3);
 
-// Add preload for critical resources
-function westpace_preload_critical_resources() {
-    echo '<link rel="preload" href="' . WESTPACE_THEME_URI . '/assets/css/material-design.css" as="style">' . "\n";
-    echo '<link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style">' . "\n";
-}
-add_action('wp_head', 'westpace_preload_critical_resources', 1);
-
-/**
- * Custom post types (optional)
- */
-function westpace_custom_post_types() {
-    // Portfolio post type
-    register_post_type('portfolio', array(
-        'labels' => array(
-            'name' => __('Portfolio', 'westpace-material'),
-            'singular_name' => __('Portfolio Item', 'westpace-material'),
-        ),
-        'public' => true,
-        'has_archive' => true,
-        'menu_icon' => 'dashicons-portfolio',
-        'supports' => array('title', 'editor', 'thumbnail', 'excerpt'),
-        'rewrite' => array('slug' => 'portfolio'),
-    ));
-
-    // Testimonials post type
-    register_post_type('testimonials', array(
-        'labels' => array(
-            'name' => __('Testimonials', 'westpace-material'),
-            'singular_name' => __('Testimonial', 'westpace-material'),
-        ),
-        'public' => true,
-        'menu_icon' => 'dashicons-format-quote',
-        'supports' => array('title', 'editor', 'thumbnail'),
-        'rewrite' => array('slug' => 'testimonials'),
-    ));
-}
-add_action('init', 'westpace_custom_post_types');
-
-/**
- * AJAX handlers for theme functionality
- */
-function westpace_ajax_newsletter_signup() {
-    // Verify nonce
-    if (!wp_verify_nonce($_POST['nonce'], 'westpace_nonce')) {
-        wp_die('Security check failed');
+// Optimize database queries
+function westpace_optimize_queries() {
+    if (!is_admin()) {
+        // Remove unnecessary widgets from front-end
+        remove_action('wp_head', 'wp_widget_recent_comments_style');
     }
+}
+add_action('init', 'westpace_optimize_queries');
+
+// Enable Gzip compression
+function westpace_enable_gzip() {
+    if (!headers_sent() && !ob_get_contents() && !ini_get('zlib.output_compression')) {
+        ob_start('ob_gzhandler');
+    }
+}
+add_action('init', 'westpace_enable_gzip');
+
+/**
+ * Custom admin enhancements
+ */
+function westpace_admin_styles() {
+    echo '<style>
+        .post-type-product .wp-admin select,
+        .post-type-product .wp-admin input[type="text"] {
+            border-radius: 4px;
+        }
+        .woocommerce_page_wc-settings .wc-settings-tab-bar {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+    </style>';
+}
+add_action('admin_head', 'westpace_admin_styles');
+
+/**
+ * Custom login page styling
+ */
+function westpace_custom_login() {
+    echo '<style>
+        body.login {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .login form {
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .login h1 a {
+            background-size: contain;
+            width: 200px;
+        }
+    </style>';
+}
+add_action('login_head', 'westpace_custom_login');
+
+/**
+ * Newsletter subscription AJAX handler
+ */
+function westpace_newsletter_subscribe() {
+    check_ajax_referer('westpace_nonce', 'nonce');
     
     $email = sanitize_email($_POST['email']);
     
@@ -479,119 +778,10 @@ function westpace_ajax_newsletter_signup() {
         wp_send_json_error(__('Invalid email address', 'westpace-material'));
     }
     
-    // Add your newsletter signup logic here
-    // For example, save to database or send to newsletter service
+    // Here you would integrate with your newsletter service
+    // For now, we'll just simulate success
     
     wp_send_json_success(__('Successfully subscribed!', 'westpace-material'));
 }
-add_action('wp_ajax_westpace_newsletter_signup', 'westpace_ajax_newsletter_signup');
-add_action('wp_ajax_nopriv_westpace_newsletter_signup', 'westpace_ajax_newsletter_signup');
-
-/**
- * Contact form AJAX handler
- */
-function westpace_ajax_contact_form() {
-    // Verify nonce
-    if (!wp_verify_nonce($_POST['nonce'], 'westpace_nonce')) {
-        wp_die('Security check failed');
-    }
-    
-    $name = sanitize_text_field($_POST['name']);
-    $email = sanitize_email($_POST['email']);
-    $subject = sanitize_text_field($_POST['subject']);
-    $message = sanitize_textarea_field($_POST['message']);
-    
-    // Validate required fields
-    if (empty($name) || empty($email) || empty($message)) {
-        wp_send_json_error(__('Please fill in all required fields', 'westpace-material'));
-    }
-    
-    if (!is_email($email)) {
-        wp_send_json_error(__('Invalid email address', 'westpace-material'));
-    }
-    
-    // Send email
-    $to = get_option('admin_email');
-    $subject = 'Contact Form: ' . $subject;
-    $body = "Name: $name\nEmail: $email\n\nMessage:\n$message";
-    $headers = array('Content-Type: text/plain; charset=UTF-8');
-    
-    if (wp_mail($to, $subject, $body, $headers)) {
-        wp_send_json_success(__('Message sent successfully!', 'westpace-material'));
-    } else {
-        wp_send_json_error(__('Failed to send message. Please try again.', 'westpace-material'));
-    }
-}
-add_action('wp_ajax_westpace_contact_form', 'westpace_ajax_contact_form');
-add_action('wp_ajax_nopriv_westpace_contact_form', 'westpace_ajax_contact_form');
-
-/**
- * Theme activation hook
- */
-function westpace_activation_notice() {
-    add_action('admin_notices', function() {
-        echo '<div class="notice notice-success is-dismissible">';
-        echo '<p>' . __('Westpace Material theme activated successfully! Visit the Customizer to configure your theme settings.', 'westpace-material') . '</p>';
-        echo '</div>';
-    });
-}
-register_activation_hook(__FILE__, 'westpace_activation_notice');
-
-/**
- * Add body classes based on theme options
- */
-function westpace_body_classes($classes) {
-    if (get_theme_mod('dark_mode', false)) {
-        $classes[] = 'dark-mode';
-    }
-    
-    if (get_theme_mod('sticky_header', true)) {
-        $classes[] = 'sticky-header';
-    }
-    
-    if (is_singular() && get_theme_mod('show_breadcrumbs', true)) {
-        $classes[] = 'has-breadcrumbs';
-    }
-    
-    return $classes;
-}
-add_filter('body_class', 'westpace_body_classes');
-
-/**
- * Add skip link for accessibility
- */
-function westpace_skip_link() {
-    echo '<a class="skip-link screen-reader-text" href="#main">' . __('Skip to content', 'westpace-material') . '</a>';
-}
-add_action('wp_body_open', 'westpace_skip_link');
-
-/**
- * Improve WordPress queries
- */
-function westpace_modify_main_query($query) {
-    if (!is_admin() && $query->is_main_query()) {
-        if (is_home()) {
-            $query->set('posts_per_page', get_theme_mod('posts_per_page', 10));
-        }
-    }
-}
-add_action('pre_get_posts', 'westpace_modify_main_query');
-
-/**
- * Add async/defer attributes to specific scripts
- */
-function westpace_script_attributes($tag, $handle, $src) {
-    $async_scripts = array('google-analytics');
-    $defer_scripts = array('westpace-theme-js');
-    
-    if (in_array($handle, $async_scripts)) {
-        return str_replace('<script', '<script async', $tag);
-    }
-    
-    if (in_array($handle, $defer_scripts)) {
-        return str_replace('<script', '<script defer', $tag);
-    }
-    
-    return $tag;
-}
-add_filter('script_loader_tag', 'westpace_script_attributes', 10, 3);
+add_action('wp_ajax_westpace_newsletter', 'westpace_newsletter_subscribe');
+add_action('wp_ajax_nopriv_westpace_newsletter', 'westpace_newsletter_subscribe');
