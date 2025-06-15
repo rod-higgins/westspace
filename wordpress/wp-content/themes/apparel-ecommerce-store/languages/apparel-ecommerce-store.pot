@@ -1,0 +1,822 @@
+# Copyright (C) 2025 Creta Themes
+# This file is distributed under the GNU General Public License v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Apparel Ecommerce Store 3.0.2\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/theme/apparel-ecommerce-store\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-05-30T10:18:38+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: apparel-ecommerce-store\n"
+
+#. Theme Name of the theme
+#: style.css
+#: inc/block-patterns.php:11
+#: patterns/footer-columns.php:116
+#: patterns/main-banner.php:18
+#: patterns/main-banner.php:50
+msgid "Apparel Ecommerce Store"
+msgstr ""
+
+#. Theme URI of the theme
+#: style.css
+msgid "https://www.cretathemes.com/products/free-ecommerce-wordpress-theme"
+msgstr ""
+
+#. Description of the theme
+#: style.css
+msgid "Apparel Ecommerce Store is a cutting-edge and versatile website template designed to cater specifically to fashion and apparel businesses aiming to establish a strong online presence. This theme is tailored to provide a comprehensive platform for showcasing clothing collections, electronics, fashion collections, electronics store, toy shop, gaming accessories, apparel brands, footwear, fashion accessories, lifestyle gadgets, clothing lines, tech gadgets, children's toys, video games, trendy apparel, designer shoes, jewelry accessories, home lifestyle products, electronic devices, seasonal fashion, casual wear, sportswear.toys, games, apparels, shoes, accessories, and lifestyle products. With a modern and stylish design, the Apparel Ecommerce Store WordPress Theme captures the essence of the fashion industry. Its layout emphasizes visuals, enabling you to present your products in an appealing and organized manner. This theme comes equipped with customizable sections for product categories, individual product pages, and shopping carts, ensuring a seamless and user-friendly browsing and purchasing experience for customers. One of the distinctive features of this theme is its e-commerce integration. The built-in functionality allows you to manage inventory, set pricing, offer discounts, and facilitate secure online transactions. This empowers you to effortlessly transform your website into a fully functional online apparel store. The responsiveness of the theme guarantees that your website looks and performs consistently across various devices, from desktops to smartphones. The Apparel Ecommerce Store WordPress Theme also accommodates visual customization, enabling you to select color schemes, typography, and layouts that align with your brand’s identity. Social media integration further facilitates brand exposure and engagement with customers."
+msgstr ""
+
+#. Author of the theme
+#: style.css
+msgid "Creta Themes"
+msgstr ""
+
+#. Author URI of the theme
+#: style.css
+msgid "https://cretathemes.com/"
+msgstr ""
+
+#: functions.php:23
+msgid "https://www.cretathemes.com/products/apparel-wordpress-theme"
+msgstr ""
+
+#: functions.php:24
+msgid "https://pattern.cretathemes.com/apparel-ecommerce-store/"
+msgstr ""
+
+#: functions.php:25
+msgid "https://pattern.cretathemes.com/free-guide/apparel-ecommerce-store/"
+msgstr ""
+
+#: functions.php:26
+msgid "https://pattern.cretathemes.com/pro-guide/apparel-ecommerce-store/"
+msgstr ""
+
+#: functions.php:27
+msgid "https://wordpress.org/support/theme/apparel-ecommerce-store/"
+msgstr ""
+
+#: functions.php:28
+msgid "https://wordpress.org/support/theme/apparel-ecommerce-store/reviews/#new-post"
+msgstr ""
+
+#: functions.php:29
+msgid "https://www.cretathemes.com/products/wordpress-theme-bundle"
+msgstr ""
+
+#: functions.php:30
+msgid "https://www.cretathemes.com/collections/wordpress-block-themes"
+msgstr ""
+
+#: functions.php:105
+msgid "Hey, Thank you for installing Apparel Ecommerce Store Theme!"
+msgstr ""
+
+#: functions.php:106
+msgid "Navigate Getstart"
+msgstr ""
+
+#: functions.php:107
+#: inc/get-started/get-started.php:46
+msgid "Site Editor"
+msgstr ""
+
+#: functions.php:108
+msgid "Buy Pro"
+msgstr ""
+
+#: functions.php:109
+msgid "Get Bundle"
+msgstr ""
+
+#: functions.php:111
+msgid "Dismiss"
+msgstr ""
+
+#: inc/block-patterns.php:12
+msgid "Pages"
+msgstr ""
+
+#: inc/block-styles.php:17
+msgid "No Padding"
+msgstr ""
+
+#: inc/block-styles.php:26
+#: inc/block-styles.php:44
+#: inc/block-styles.php:53
+#: inc/block-styles.php:63
+#: inc/block-styles.php:73
+#: inc/block-styles.php:82
+msgid "Theme Style"
+msgstr ""
+
+#: inc/block-styles.php:35
+msgid "Plain"
+msgstr ""
+
+#: inc/customizer.php:84
+#: inc/get-started/get-started.php:87
+msgid "Apparel Ecommerce Store Pro"
+msgstr ""
+
+#: inc/customizer.php:85
+msgid "GET PRO"
+msgstr ""
+
+#: inc/get-started/get-started.php:4
+msgid "Get Started"
+msgstr ""
+
+#: inc/get-started/get-started.php:32
+msgid "Important Links"
+msgstr ""
+
+#: inc/get-started/get-started.php:34
+msgid "Free Setup Guide"
+msgstr ""
+
+#: inc/get-started/get-started.php:35
+msgid "Support Forum"
+msgstr ""
+
+#: inc/get-started/get-started.php:36
+msgid "Live Demo"
+msgstr ""
+
+#: inc/get-started/get-started.php:37
+msgid "Pro Setup Guide"
+msgstr ""
+
+#: inc/get-started/get-started.php:43
+msgid "Theme Customization"
+msgstr ""
+
+#: inc/get-started/get-started.php:44
+msgid "Effortlessly modify & maintain your site using editor."
+msgstr ""
+
+#: inc/get-started/get-started.php:51
+msgid "Need Support?"
+msgstr ""
+
+#: inc/get-started/get-started.php:52
+msgid "Go to our support forum to help you in case of queries."
+msgstr ""
+
+#: inc/get-started/get-started.php:54
+msgid "Get Support"
+msgstr ""
+
+#: inc/get-started/get-started.php:59
+msgid "Leave Us A Review"
+msgstr ""
+
+#: inc/get-started/get-started.php:60
+msgid "Are you enjoying Our Theme? We would Love to hear your Feedback."
+msgstr ""
+
+#: inc/get-started/get-started.php:62
+msgid "Rate Us"
+msgstr ""
+
+#: inc/get-started/get-started.php:68
+msgid "Why Go For Premium?"
+msgstr ""
+
+#: inc/get-started/get-started.php:70
+msgid "Advanced Customization Options"
+msgstr ""
+
+#: inc/get-started/get-started.php:71
+msgid "One-Click Demo Import"
+msgstr ""
+
+#: inc/get-started/get-started.php:72
+msgid "WooCommerce Integration & Enhanced Features"
+msgstr ""
+
+#: inc/get-started/get-started.php:73
+msgid "Performance Optimization & SEO-Ready"
+msgstr ""
+
+#: inc/get-started/get-started.php:74
+msgid "Premium Support & Regular Updates"
+msgstr ""
+
+#: inc/get-started/get-started.php:81
+msgid "Get Theme Bundle"
+msgstr ""
+
+#: inc/get-started/get-started.php:83
+#: inc/get-started/get-started.php:89
+msgid "SUMMER SALE: "
+msgstr ""
+
+#: inc/get-started/get-started.php:83
+msgid "Extra 20%"
+msgstr ""
+
+#: inc/get-started/get-started.php:83
+msgid " OFF on WordPress Theme Bundle Use Code: "
+msgstr ""
+
+#: inc/get-started/get-started.php:83
+msgid "“HEAT20”"
+msgstr ""
+
+#: inc/get-started/get-started.php:84
+msgid "Get Theme Bundle For "
+msgstr ""
+
+#: inc/get-started/get-started.php:84
+msgid "$86"
+msgstr ""
+
+#: inc/get-started/get-started.php:84
+msgid " $68"
+msgstr ""
+
+#: inc/get-started/get-started.php:89
+msgid "Extra 25%"
+msgstr ""
+
+#: inc/get-started/get-started.php:89
+msgid " OFF on WordPress Block Themes! Use Code: "
+msgstr ""
+
+#: inc/get-started/get-started.php:89
+msgid "“SUMMER25”"
+msgstr ""
+
+#: inc/get-started/get-started.php:90
+msgid "Upgrade To Pro"
+msgstr ""
+
+#: inc/get-started/get-started.php:93
+msgid "View All Our Themes"
+msgstr ""
+
+#: inc/get-started/get-started.php:95
+msgid "View All Our Premium Themes"
+msgstr ""
+
+#: inc/icon-function.php:26
+msgid "Please define default parameters in the form of an array."
+msgstr ""
+
+#: inc/icon-function.php:31
+msgid "Please define an SVG icon filename."
+msgstr ""
+
+#: patterns/404.php
+msgctxt "Pattern title"
+msgid "404 Page"
+msgstr ""
+
+#: patterns/404.php:9
+msgid "404"
+msgstr ""
+
+#: patterns/404.php:13
+msgid "Oops! That page cannot be found"
+msgstr ""
+
+#: patterns/archive-header-with-background.php
+msgctxt "Pattern title"
+msgid "Archive Header With Background"
+msgstr ""
+
+#: patterns/default-header.php
+msgctxt "Pattern title"
+msgid "Default Header"
+msgstr ""
+
+#: patterns/footer-columns.php
+msgctxt "Pattern title"
+msgid "Footer Columns"
+msgstr ""
+
+#: patterns/footer-columns.php:19
+#: patterns/main-banner.php:22
+#: patterns/main-banner.php:54
+msgid "Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
+msgstr ""
+
+#: patterns/footer-columns.php:36
+msgid "Shop"
+msgstr ""
+
+#: patterns/footer-columns.php:54
+msgid "Quick Links"
+msgstr ""
+
+#: patterns/footer-columns.php:74
+msgid "Get In Touch"
+msgstr ""
+
+#: patterns/footer-columns.php:83
+msgid "support@example.com"
+msgstr ""
+
+#: patterns/footer-columns.php:103
+msgid "Mon - Fri 8:00 AM to 5:00 PM SUNDAY -"
+msgstr ""
+
+#: patterns/footer-columns.php:103
+msgid "CLOSED"
+msgstr ""
+
+#: patterns/footer-columns.php:116
+msgid "All Rights Reserved."
+msgstr ""
+
+#: patterns/main-banner.php
+msgctxt "Pattern title"
+msgid "Header Media"
+msgstr ""
+
+#: patterns/main-banner.php:27
+#: patterns/main-banner.php:59
+msgid "Explore More"
+msgstr ""
+
+#: patterns/main-banner.php:91
+msgid "Men Shopping"
+msgstr ""
+
+#: patterns/main-banner.php:101
+msgid "Women Shopping"
+msgstr ""
+
+#: patterns/main-header.php
+msgctxt "Pattern title"
+msgid "Main Header"
+msgstr ""
+
+#: patterns/main-header.php:33
+msgid "00-123-456-789"
+msgstr ""
+
+#: patterns/main-header.php:41
+msgid "Login"
+msgstr ""
+
+#: patterns/post-header-with-background.php
+msgctxt "Pattern title"
+msgid "Post Header With Background"
+msgstr ""
+
+#: patterns/search.php
+msgctxt "Pattern title"
+msgid "Search"
+msgstr ""
+
+#: patterns/search.php:42
+msgid "Sorry Nothing Found. Try searching..!!"
+msgstr ""
+
+#: patterns/services.php
+msgctxt "Pattern title"
+msgid "Services"
+msgstr ""
+
+#: patterns/services.php:14
+msgid "Cultural Best Sellers"
+msgstr ""
+
+#: patterns/services.php:24
+#: patterns/services.php:42
+#: patterns/services.php:60
+#: patterns/services.php:78
+#: patterns/services.php:98
+#: patterns/services.php:116
+#: patterns/services.php:134
+#: patterns/services.php:152
+#: patterns/services.php:172
+#: patterns/services.php:190
+#: patterns/services.php:208
+#: patterns/services.php:226
+msgid "Your Product Title"
+msgstr ""
+
+#: patterns/sidebar.php
+msgctxt "Pattern title"
+msgid "Sidebar"
+msgstr ""
+
+#: patterns/sidebar.php:10
+msgid "Search"
+msgstr ""
+
+#: patterns/sidebar.php:18
+msgid "About"
+msgstr ""
+
+#: patterns/sidebar.php:22
+msgid "Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown prmontserrat took a galley of type and scrambled it to make a type specimen book."
+msgstr ""
+
+#: patterns/sidebar.php:26
+msgid "Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown prmontserrat took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged."
+msgstr ""
+
+#: patterns/sidebar.php:32
+msgid "Archive"
+msgstr ""
+
+#: patterns/sidebar.php:40
+msgid "Categories"
+msgstr ""
+
+#: patterns/sidebar.php:48
+msgid "Recent Posts"
+msgstr ""
+
+#: patterns/sidebar.php:56
+msgid "Tags"
+msgstr ""
+
+#: patterns/sidebar.php:64
+msgid "Social Icons"
+msgstr ""
+
+#: patterns/sidebar.php:82
+msgid "Gallery"
+msgstr ""
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Playfair Display"
+msgstr ""
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Noto Sans"
+msgstr ""
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Montserrat"
+msgstr ""
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Inter"
+msgstr ""
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Poppins"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Tiny"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Extra Small"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Small"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Medium"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Upper Heading"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Normal"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Content Heading"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Site Title"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Post Title"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Large"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Extra large"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Semi Huge"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Huge (Display)"
+msgstr ""
+
+#: theme.json
+msgctxt "Duotone name"
+msgid "Foreground and background"
+msgstr ""
+
+#: theme.json
+msgctxt "Duotone name"
+msgid "Primary and secondary"
+msgstr ""
+
+#: theme.json
+msgctxt "Duotone name"
+msgid "Primary and Heading"
+msgstr ""
+
+#: theme.json
+msgctxt "Duotone name"
+msgid "Secondary and Heading"
+msgstr ""
+
+#: theme.json
+msgctxt "Gradient name"
+msgid "Vertical foreground to background"
+msgstr ""
+
+#: theme.json
+msgctxt "Gradient name"
+msgid "Vertical background to foreground"
+msgstr ""
+
+#: theme.json
+msgctxt "Gradient name"
+msgid "Diagonal primary to foreground"
+msgstr ""
+
+#: theme.json
+msgctxt "Gradient name"
+msgid "Diagonal primary to background"
+msgstr ""
+
+#: theme.json
+msgctxt "Gradient name"
+msgid "Diagonal primary to heading"
+msgstr ""
+
+#: theme.json
+msgctxt "Gradient name"
+msgid "Diagonal primary to secondary"
+msgstr ""
+
+#: theme.json
+msgctxt "Gradient name"
+msgid "Diagonal secondary to foreground"
+msgstr ""
+
+#: theme.json
+msgctxt "Gradient name"
+msgid "Diagonal secondary to background"
+msgstr ""
+
+#: theme.json
+msgctxt "Gradient name"
+msgid "Diagonal secondary to heading"
+msgstr ""
+
+#: theme.json
+msgctxt "Gradient name"
+msgid "Diagonal secondary to primary"
+msgstr ""
+
+#: theme.json
+#: styles/blue.json
+#: styles/dark.json
+#: styles/reddish-pink.json
+#: styles/teal.json
+#: styles/vivid-orange.json
+msgctxt "Color name"
+msgid "Background"
+msgstr ""
+
+#: theme.json
+#: styles/blue.json
+#: styles/dark.json
+#: styles/reddish-pink.json
+#: styles/teal.json
+#: styles/vivid-orange.json
+msgctxt "Color name"
+msgid "Primary"
+msgstr ""
+
+#: theme.json
+#: styles/blue.json
+#: styles/dark.json
+#: styles/reddish-pink.json
+#: styles/teal.json
+#: styles/vivid-orange.json
+msgctxt "Color name"
+msgid "Secondary"
+msgstr ""
+
+#: theme.json
+#: styles/blue.json
+#: styles/dark.json
+#: styles/reddish-pink.json
+#: styles/teal.json
+#: styles/vivid-orange.json
+msgctxt "Color name"
+msgid "Border Color"
+msgstr ""
+
+#: theme.json
+#: styles/blue.json
+#: styles/dark.json
+#: styles/reddish-pink.json
+#: styles/teal.json
+#: styles/vivid-orange.json
+msgctxt "Color name"
+msgid "Heading"
+msgstr ""
+
+#: theme.json
+#: styles/blue.json
+#: styles/dark.json
+#: styles/reddish-pink.json
+#: styles/teal.json
+#: styles/vivid-orange.json
+msgctxt "Color name"
+msgid "Body Text"
+msgstr ""
+
+#: theme.json
+#: styles/blue.json
+#: styles/dark.json
+#: styles/reddish-pink.json
+#: styles/teal.json
+#: styles/vivid-orange.json
+msgctxt "Color name"
+msgid "Section Bg Color"
+msgstr ""
+
+#: theme.json
+#: styles/blue.json
+#: styles/dark.json
+#: styles/reddish-pink.json
+#: styles/teal.json
+#: styles/vivid-orange.json
+msgctxt "Color name"
+msgid "Tertiary Text Color"
+msgstr ""
+
+#: theme.json
+#: styles/blue.json
+#: styles/dark.json
+#: styles/reddish-pink.json
+#: styles/teal.json
+#: styles/vivid-orange.json
+msgctxt "Color name"
+msgid "Tertiary Bg Color"
+msgstr ""
+
+#: theme.json
+#: styles/blue.json
+#: styles/dark.json
+#: styles/reddish-pink.json
+#: styles/teal.json
+#: styles/vivid-orange.json
+msgctxt "Color name"
+msgid "Foreground"
+msgstr ""
+
+#: theme.json
+msgctxt "Template part name"
+msgid "Header"
+msgstr ""
+
+#: theme.json
+msgctxt "Template part name"
+msgid "Main Header"
+msgstr ""
+
+#: theme.json
+msgctxt "Template part name"
+msgid "Footer"
+msgstr ""
+
+#: theme.json
+msgctxt "Template part name"
+msgid "Footer Columns"
+msgstr ""
+
+#: theme.json
+msgctxt "Template part name"
+msgid "Post Content"
+msgstr ""
+
+#: theme.json
+msgctxt "Template part name"
+msgid "Page Content"
+msgstr ""
+
+#: theme.json
+msgctxt "Template part name"
+msgid "Sidebar"
+msgstr ""
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Blank"
+msgstr ""
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Single Post (Sidebar on Left)"
+msgstr ""
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Single Post (No Sidebar)"
+msgstr ""
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Post (No Header Image)"
+msgstr ""
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Single Page (Sidebar on Right)"
+msgstr ""
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Single Page (Sidebar on Left)"
+msgstr ""
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Page (No Header Image)"
+msgstr ""
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Blog Page (Right Sidebar)"
+msgstr ""
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Blog Page (Left Sidebar)"
+msgstr ""
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Blog Page (No Sidebar)"
+msgstr ""
+
+#: styles/blue.json
+msgctxt "Style variation name"
+msgid "Blue"
+msgstr ""
+
+#: styles/dark.json
+msgctxt "Style variation name"
+msgid "Dark"
+msgstr ""
+
+#: styles/reddish-pink.json
+msgctxt "Style variation name"
+msgid "Reddish Pink"
+msgstr ""
+
+#: styles/teal.json
+msgctxt "Style variation name"
+msgid "Teal"
+msgstr ""
+
+#: styles/vivid-orange.json
+msgctxt "Style variation name"
+msgid "Vivid Orange"
+msgstr ""
