@@ -1,665 +1,539 @@
 /**
- * Westpace Material Design Enhanced Theme JavaScript
- * Modern, responsive, and performance-optimized JavaScript
- * With comprehensive WooCommerce integration
- * 
- * @package Westpace_Material
- * @version 3.0.0
+ * Westpace Material Design Theme JavaScript
+ * Modern, accessible, and performant interactions
  */
 
 (function($) {
     'use strict';
 
-    // Theme object
-    const WestpaceTheme = {
-        
-        // Initialize all functionality
-        init: function() {
-            this.navigation();
-            this.materialDesign();
-            this.woocommerce();
-            this.search();
-            this.forms();
-            this.performance();
-            this.accessibility();
-            this.animations();
-        },
+    // Document ready
+    $(document).ready(function() {
+        initMobileMenu();
+        initStickyHeader();
+        initSmoothScrolling();
+        initMaterialCards();
+        initFormEnhancements();
+        initLazyLoading();
+        initAccessibility();
+        initWooCommerceEnhancements();
+        initNewsletterForm();
+        initScrollAnimations();
+    });
 
-        // Navigation functionality
-        navigation: function() {
-            // Mobile menu toggle
-            $('.mobile-menu-toggle').on('click', function(e) {
-                e.preventDefault();
-                $(this).toggleClass('active');
-                $('.mobile-menu').toggleClass('active');
-                $('body').toggleClass('mobile-menu-open');
-            });
+    /**
+     * Mobile Menu Toggle
+     */
+    function initMobileMenu() {
+        const $mobileToggle = $('.mobile-menu-toggle');
+        const $mainNav = $('.main-navigation');
+        const $body = $('body');
 
-            // Close mobile menu when clicking outside
-            $(document).on('click', function(e) {
-                if (!$(e.target).closest('.mobile-menu, .mobile-menu-toggle').length) {
-                    $('.mobile-menu-toggle').removeClass('active');
-                    $('.mobile-menu').removeClass('active');
-                    $('body').removeClass('mobile-menu-open');
-                }
-            });
+        $mobileToggle.on('click', function(e) {
+            e.preventDefault();
+            
+            $(this).toggleClass('is-active');
+            $mainNav.toggleClass('is-open');
+            $body.toggleClass('mobile-menu-open');
+            
+            // Update ARIA attributes
+            const isOpen = $mainNav.hasClass('is-open');
+            $(this).attr('aria-expanded', isOpen);
+            $mainNav.attr('aria-hidden', !isOpen);
+        });
 
-            // Smooth scroll for anchor links
-            $('a[href*="#"]:not([href="#"])').on('click', function(e) {
-                if (location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '') && location.hostname === this.hostname) {
-                    let target = $(this.hash);
-                    target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
-                    if (target.length) {
-                        e.preventDefault();
-                        $('html, body').animate({
-                            scrollTop: target.offset().top - 80
-                        }, 800);
-                    }
-                }
-            });
-
-            // Sticky header
-            $(window).on('scroll', function() {
-                if ($(this).scrollTop() > 100) {
-                    $('.site-header').addClass('sticky');
-                } else {
-                    $('.site-header').removeClass('sticky');
-                }
-            });
-        },
-
-        // Material Design interactions
-        materialDesign: function() {
-            // Ripple effect for buttons
-            $('.btn, .material-btn').on('click', function(e) {
-                const btn = $(this);
-                const ripple = $('<span class="ripple"></span>');
-                
-                btn.append(ripple);
-                
-                const max = Math.max(btn.outerWidth(), btn.outerHeight());
-                const size = max;
-                
-                ripple.css({
-                    width: size,
-                    height: size,
-                    left: e.pageX - btn.offset().left - size / 2,
-                    top: e.pageY - btn.offset().top - size / 2
-                }).addClass('animate');
-                
-                setTimeout(() => ripple.remove(), 600);
-            });
-
-            // Material card hover effects
-            $('.material-card').hover(
-                function() {
-                    $(this).addClass('elevation-8');
-                },
-                function() {
-                    $(this).removeClass('elevation-8');
-                }
-            );
-
-            // Form field focus effects
-            $('.form-field input, .form-field textarea').on('focus blur', function() {
-                $(this).closest('.form-field').toggleClass('focused');
-            });
-
-            // Floating labels
-            $('.form-field input, .form-field textarea').on('blur', function() {
-                if ($(this).val()) {
-                    $(this).closest('.form-field').addClass('has-value');
-                } else {
-                    $(this).closest('.form-field').removeClass('has-value');
-                }
-            });
-        },
-
-        // WooCommerce specific functionality
-        woocommerce: function() {
-            if (!westpaceData.isWooActive) return;
-
-            // Enhanced AJAX add to cart
-            $(document).on('click', '.ajax_add_to_cart', function(e) {
-                e.preventDefault();
-                
-                const btn = $(this);
-                const productId = btn.data('product_id');
-                const originalText = btn.find('.btn-text').text();
-                
-                // Button loading state
-                btn.addClass('loading').prop('disabled', true);
-                btn.find('.btn-text').text(westpaceData.strings.loading);
-                btn.find('.btn-icon').text('hourglass_empty');
-                
-                $.ajax({
-                    type: 'POST',
-                    url: wc_add_to_cart_params.ajax_url,
-                    data: {
-                        action: 'woocommerce_add_to_cart',
-                        product_id: productId,
-                        quantity: 1
-                    },
-                    success: function(response) {
-                        if (response.error && response.product_url) {
-                            window.location = response.product_url;
-                            return;
-                        }
-                        
-                        // Update cart fragments
-                        $(document.body).trigger('added_to_cart', [response.fragments, response.cart_hash, btn]);
-                        
-                        // Success state
-                        btn.removeClass('loading').addClass('added');
-                        btn.find('.btn-text').text(westpaceData.strings.addedToCart);
-                        btn.find('.btn-icon').text('check_circle');
-                        
-                        // Show notification
-                        WestpaceTheme.showNotification(westpaceData.strings.addedToCart, 'success');
-                        
-                        // Reset button after 2 seconds
-                        setTimeout(() => {
-                            btn.removeClass('added').prop('disabled', false);
-                            btn.find('.btn-text').text(originalText);
-                            btn.find('.btn-icon').text('add_shopping_cart');
-                        }, 2000);
-                    },
-                    error: function() {
-                        btn.removeClass('loading').prop('disabled', false);
-                        btn.find('.btn-text').text(originalText);
-                        btn.find('.btn-icon').text('add_shopping_cart');
-                        
-                        WestpaceTheme.showNotification(westpaceData.strings.cartError, 'error');
-                    }
-                });
-            });
-
-            // Quantity controls
-            $(document).on('click', '.btn-quantity', function(e) {
-                e.preventDefault();
-                
-                const btn = $(this);
-                const input = btn.siblings('.qty');
-                const currentVal = parseInt(input.val()) || 0;
-                const max = parseInt(input.attr('max')) || 999;
-                const min = parseInt(input.attr('min')) || 1;
-                
-                if (btn.hasClass('plus')) {
-                    if (currentVal < max) {
-                        input.val(currentVal + 1).trigger('change');
-                    }
-                } else {
-                    if (currentVal > min) {
-                        input.val(currentVal - 1).trigger('change');
-                    }
-                }
-            });
-
-            // Mini cart dropdown
-            $('.mini-cart-trigger').hover(
-                function() {
-                    $(this).siblings('.mini-cart-dropdown').addClass('show');
-                },
-                function() {
-                    setTimeout(() => {
-                        if (!$('.mini-cart-dropdown:hover').length) {
-                            $('.mini-cart-dropdown').removeClass('show');
-                        }
-                    }, 300);
-                }
-            );
-
-            $('.mini-cart-dropdown').hover(
-                function() {
-                    $(this).addClass('show');
-                },
-                function() {
-                    $(this).removeClass('show');
-                }
-            );
-
-            // Product gallery enhancements
-            if ($('.woocommerce-product-gallery').length) {
-                // Zoom functionality
-                $('.woocommerce-product-gallery__image img').on('click', function() {
-                    $(this).toggleClass('zoomed');
-                });
-
-                // Image lazy loading
-                $('img[data-src]').each(function() {
-                    const img = $(this);
-                    img.attr('src', img.data('src')).removeAttr('data-src').addClass('loaded');
-                });
+        // Close mobile menu when clicking outside
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.site-header').length) {
+                $mobileToggle.removeClass('is-active');
+                $mainNav.removeClass('is-open');
+                $body.removeClass('mobile-menu-open');
+                $mobileToggle.attr('aria-expanded', 'false');
+                $mainNav.attr('aria-hidden', 'true');
             }
+        });
 
-            // Quick view functionality
-            $(document).on('click', '.quick-view-btn', function(e) {
-                e.preventDefault();
-                
-                const productId = $(this).data('product-id');
-                WestpaceTheme.openQuickView(productId);
-            });
+        // Close mobile menu on escape key
+        $(document).on('keydown', function(e) {
+            if (e.keyCode === 27 && $mainNav.hasClass('is-open')) {
+                $mobileToggle.trigger('click');
+            }
+        });
+    }
 
-            // Wishlist functionality
-            $(document).on('click', '.wishlist-btn', function(e) {
-                e.preventDefault();
-                
-                const btn = $(this);
-                const productId = btn.data('product-id');
-                const icon = btn.find('.material-icons');
-                
-                btn.addClass('loading');
-                
-                // Toggle wishlist state (you'd integrate with actual wishlist plugin)
-                setTimeout(() => {
-                    btn.removeClass('loading').toggleClass('active');
-                    if (btn.hasClass('active')) {
-                        icon.text('favorite');
-                        WestpaceTheme.showNotification('Added to wishlist', 'success');
+    /**
+     * Sticky Header with Scroll Detection
+     */
+    function initStickyHeader() {
+        const $header = $('.site-header');
+        let lastScrollTop = 0;
+        let isScrolling = false;
+
+        $(window).on('scroll', function() {
+            if (!isScrolling) {
+                requestAnimationFrame(function() {
+                    const scrollTop = $(window).scrollTop();
+                    
+                    // Add scrolled class
+                    if (scrollTop > 100) {
+                        $header.addClass('scrolled');
                     } else {
-                        icon.text('favorite_border');
-                        WestpaceTheme.showNotification('Removed from wishlist', 'info');
+                        $header.removeClass('scrolled');
                     }
-                }, 500);
-            });
 
-            // Enhanced product filters
-            $('.shop-filters input[type="checkbox"]').on('change', function() {
-                const filter = $(this);
-                const form = filter.closest('form');
-                
-                // Add loading state
-                $('.products').addClass('loading');
-                
-                // Submit form with AJAX (if AJAX filtering is implemented)
-                // This would need additional backend support
-            });
+                    // Hide header on scroll down, show on scroll up
+                    if (scrollTop > lastScrollTop && scrollTop > 200) {
+                        $header.addClass('hidden');
+                    } else {
+                        $header.removeClass('hidden');
+                    }
 
-            // Checkout enhancements
-            if ($('body').hasClass('woocommerce-checkout')) {
-                // Form validation
-                $('.checkout').on('submit', function() {
-                    const btn = $('#place_order');
-                    btn.find('.btn-text').hide();
-                    btn.find('.btn-loading').show();
+                    lastScrollTop = scrollTop;
+                    isScrolling = false;
                 });
+                isScrolling = true;
+            }
+        });
+    }
 
-                // Show/hide login form
-                $('.show-login-form').on('click', function(e) {
-                    e.preventDefault();
-                    $('.woocommerce-form-login').slideToggle();
-                });
-
-                // Show/hide coupon form
-                $('.show-coupon-form').on('click', function(e) {
-                    e.preventDefault();
-                    $('.checkout_coupon').slideToggle();
+    /**
+     * Smooth Scrolling for Anchor Links
+     */
+    function initSmoothScrolling() {
+        $('a[href^="#"]').on('click', function(e) {
+            const target = $(this.getAttribute('href'));
+            
+            if (target.length) {
+                e.preventDefault();
+                
+                $('html, body').animate({
+                    scrollTop: target.offset().top - 100
+                }, {
+                    duration: 600,
+                    easing: 'swing'
                 });
             }
-        },
+        });
+    }
 
-        // Enhanced search functionality
-        search: function() {
-            const searchForm = $('.search-form');
-            const searchInput = searchForm.find('input[type="search"]');
-            const searchResults = $('<div class="search-results-dropdown"></div>');
+    /**
+     * Material Card Hover Effects
+     */
+    function initMaterialCards() {
+        $('.material-card').hover(
+            function() {
+                $(this).addClass('elevation-4');
+            },
+            function() {
+                $(this).removeClass('elevation-4');
+            }
+        );
+
+        // Add ripple effect to buttons
+        $('.btn').on('click', function(e) {
+            const $this = $(this);
+            const rect = this.getBoundingClientRect();
+            const ripple = $('<span class="ripple"></span>');
             
-            searchForm.append(searchResults);
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
             
-            let searchTimeout;
-            
-            searchInput.on('input', function() {
-                const keyword = $(this).val().trim();
-                
-                clearTimeout(searchTimeout);
-                
-                if (keyword.length < 3) {
-                    searchResults.hide();
-                    return;
-                }
-                
-                searchTimeout = setTimeout(() => {
-                    WestpaceTheme.performSearch(keyword, searchResults);
-                }, 300);
+            ripple.css({
+                width: size,
+                height: size,
+                left: x,
+                top: y
             });
             
-            // Hide search results when clicking outside
-            $(document).on('click', function(e) {
-                if (!$(e.target).closest('.search-form').length) {
-                    searchResults.hide();
+            $this.append(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+    }
+
+    /**
+     * Form Enhancements
+     */
+    function initFormEnhancements() {
+        // Floating labels
+        $('.form-control').on('focus blur', function() {
+            const $this = $(this);
+            const $label = $this.siblings('.form-label');
+            
+            if ($this.val() || $this.is(':focus')) {
+                $label.addClass('focused');
+            } else {
+                $label.removeClass('focused');
+            }
+        });
+
+        // Real-time validation
+        $('.form-control[required]').on('blur', function() {
+            const $this = $(this);
+            const isValid = this.checkValidity();
+            
+            $this.toggleClass('is-valid', isValid)
+                 .toggleClass('is-invalid', !isValid);
+        });
+
+        // Auto-resize textareas
+        $('textarea').on('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+    }
+
+    /**
+     * Lazy Loading for Images
+     */
+    function initLazyLoading() {
+        if ('IntersectionObserver' in window) {
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.classList.remove('lazy');
+                        imageObserver.unobserve(img);
+                    }
+                });
+            });
+
+            document.querySelectorAll('img[data-src]').forEach(img => {
+                imageObserver.observe(img);
+            });
+        }
+    }
+
+    /**
+     * Accessibility Enhancements
+     */
+    function initAccessibility() {
+        // Skip link functionality
+        $('.skip-link').on('click', function(e) {
+            const target = $($(this).attr('href'));
+            if (target.length) {
+                target.attr('tabindex', '-1').focus();
+            }
+        });
+
+        // Keyboard navigation for dropdowns
+        $('.menu-item-has-children > a').on('keydown', function(e) {
+            if (e.keyCode === 13 || e.keyCode === 32) { // Enter or Space
+                e.preventDefault();
+                $(this).siblings('.sub-menu').toggle();
+            }
+        });
+
+        // Focus management for modals
+        $(document).on('shown.bs.modal', '.modal', function() {
+            $(this).find('[autofocus]').focus();
+        });
+    }
+
+    /**
+     * WooCommerce Enhancements
+     */
+    function initWooCommerceEnhancements() {
+        if (typeof wc_add_to_cart_params === 'undefined') {
+            return;
+        }
+
+        // Enhanced add to cart functionality
+        $('.add-to-cart-btn').on('click', function(e) {
+            e.preventDefault();
+            
+            const $button = $(this);
+            const productId = $button.data('product_id');
+            
+            // Add loading state
+            $button.addClass('loading').prop('disabled', true);
+            
+            // Simulate AJAX call (replace with actual WooCommerce AJAX)
+            setTimeout(() => {
+                $button.removeClass('loading').prop('disabled', false);
+                $button.text('Added!').addClass('added');
+                
+                // Reset button after 2 seconds
+                setTimeout(() => {
+                    $button.text('Add to Cart').removeClass('added');
+                }, 2000);
+            }, 1000);
+        });
+
+        // Product image gallery enhancement
+        $('.woocommerce-product-gallery__image').on('click', function(e) {
+            e.preventDefault();
+            // Custom lightbox functionality would go here
+        });
+
+        // Quantity input enhancement
+        $('.quantity').each(function() {
+            const $qty = $(this);
+            const $input = $qty.find('.qty');
+            const min = parseInt($input.attr('min')) || 1;
+            const max = parseInt($input.attr('max')) || 999;
+
+            $qty.prepend('<button type="button" class="qty-btn qty-minus">-</button>');
+            $qty.append('<button type="button" class="qty-btn qty-plus">+</button>');
+
+            $qty.on('click', '.qty-minus', function() {
+                const current = parseInt($input.val()) || min;
+                if (current > min) {
+                    $input.val(current - 1).trigger('change');
                 }
             });
-        },
 
-        // Perform AJAX search
-        performSearch: function(keyword, resultsContainer) {
+            $qty.on('click', '.qty-plus', function() {
+                const current = parseInt($input.val()) || min;
+                if (current < max) {
+                    $input.val(current + 1).trigger('change');
+                }
+            });
+        });
+    }
+
+    /**
+     * Newsletter Form Handling
+     */
+    function initNewsletterForm() {
+        $('.newsletter-form').on('submit', function(e) {
+            e.preventDefault();
+            
+            const $form = $(this);
+            const $email = $form.find('input[type="email"]');
+            const $button = $form.find('button[type="submit"]');
+            const $message = $form.find('.form-message');
+            
+            // Basic validation
+            if (!$email.val() || !isValidEmail($email.val())) {
+                showMessage($message, 'Please enter a valid email address.', 'error');
+                return;
+            }
+            
+            // Show loading state
+            $button.prop('disabled', true).text('Subscribing...');
+            
+            // AJAX call
             $.ajax({
-                url: westpaceData.ajaxUrl,
+                url: westpace_ajax.ajax_url,
                 type: 'POST',
                 data: {
-                    action: 'westpace_product_search',
-                    keyword: keyword,
-                    nonce: westpaceData.nonce
+                    action: 'westpace_newsletter',
+                    email: $email.val(),
+                    nonce: westpace_ajax.nonce
                 },
                 success: function(response) {
-                    if (response.success && response.data.length > 0) {
-                        let html = '<div class="search-results-header">Products</div>';
-                        
-                        response.data.forEach(product => {
-                            html += `
-                                <div class="search-result-item">
-                                    <img src="${product.image}" alt="${product.title}" class="result-image">
-                                    <div class="result-content">
-                                        <h4><a href="${product.url}">${product.title}</a></h4>
-                                        <div class="result-price">${product.price}</div>
-                                    </div>
-                                </div>
-                            `;
-                        });
-                        
-                        html += '<div class="search-results-footer"><a href="?s=' + keyword + '">View all results</a></div>';
-                        
-                        resultsContainer.html(html).show();
+                    if (response.success) {
+                        showMessage($message, response.data, 'success');
+                        $form[0].reset();
                     } else {
-                        resultsContainer.html('<div class="no-results">No products found</div>').show();
+                        showMessage($message, response.data, 'error');
                     }
                 },
                 error: function() {
-                    resultsContainer.hide();
+                    showMessage($message, 'Something went wrong. Please try again.', 'error');
+                },
+                complete: function() {
+                    $button.prop('disabled', false).text('Subscribe');
                 }
             });
-        },
+        });
+    }
 
-        // Quick view modal
-        openQuickView: function(productId) {
-            const modal = $(`
-                <div class="quick-view-modal">
-                    <div class="modal-overlay"></div>
-                    <div class="modal-content">
-                        <button class="modal-close">
-                            <span class="material-icons">close</span>
-                        </button>
-                        <div class="modal-body">
-                            <div class="loading-spinner">
-                                <span class="material-icons">hourglass_empty</span>
-                                <p>Loading product...</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `);
-            
-            $('body').append(modal).addClass('modal-open');
-            
-            // Close modal handlers
-            modal.on('click', '.modal-close, .modal-overlay', function() {
-                WestpaceTheme.closeQuickView(modal);
-            });
-            
-            // Load product data (you'd need to implement the backend endpoint)
-            setTimeout(() => {
-                modal.find('.modal-body').html(`
-                    <div class="quick-view-content">
-                        <div class="product-images">
-                            <!-- Product images would load here -->
-                        </div>
-                        <div class="product-summary">
-                            <!-- Product summary would load here -->
-                        </div>
-                    </div>
-                `);
-            }, 1000);
-        },
-
-        // Close quick view modal
-        closeQuickView: function(modal) {
-            modal.addClass('closing');
-            $('body').removeClass('modal-open');
-            
-            setTimeout(() => {
-                modal.remove();
-            }, 300);
-        },
-
-        // Form enhancements
-        forms: function() {
-            // Newsletter subscription
-            $('.newsletter-form').on('submit', function(e) {
-                e.preventDefault();
-                
-                const form = $(this);
-                const email = form.find('input[type="email"]').val();
-                const btn = form.find('button[type="submit"]');
-                const originalText = btn.text();
-                
-                btn.prop('disabled', true).text(westpaceData.strings.loading);
-                
-                $.ajax({
-                    url: westpaceData.ajaxUrl,
-                    type: 'POST',
-                    data: {
-                        action: 'westpace_newsletter',
-                        email: email,
-                        nonce: westpaceData.nonce
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            WestpaceTheme.showNotification(response.data, 'success');
-                            form[0].reset();
-                        } else {
-                            WestpaceTheme.showNotification(response.data, 'error');
-                        }
-                    },
-                    error: function() {
-                        WestpaceTheme.showNotification(westpaceData.strings.newsletterError, 'error');
-                    },
-                    complete: function() {
-                        btn.prop('disabled', false).text(originalText);
-                    }
-                });
-            });
-
-            // Form validation
-            $('form').on('submit', function() {
-                const form = $(this);
-                let isValid = true;
-                
-                form.find('[required]').each(function() {
-                    const field = $(this);
-                    const fieldContainer = field.closest('.form-field');
-                    
-                    if (!field.val().trim()) {
-                        fieldContainer.addClass('error');
-                        isValid = false;
-                    } else {
-                        fieldContainer.removeClass('error');
-                    }
-                });
-                
-                return isValid;
-            });
-        },
-
-        // Performance optimizations
-        performance: function() {
-            // Lazy load images
-            const lazyImages = $('img[data-src]');
-            
-            if ('IntersectionObserver' in window) {
-                const imageObserver = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            const img = entry.target;
-                            img.src = img.dataset.src;
-                            img.classList.remove('lazy');
-                            img.classList.add('loaded');
-                            imageObserver.unobserve(img);
-                        }
-                    });
-                });
-                
-                lazyImages.each(function() {
-                    imageObserver.observe(this);
-                });
-            } else {
-                // Fallback for older browsers
-                lazyImages.each(function() {
-                    const img = $(this);
-                    img.attr('src', img.data('src')).removeClass('lazy').addClass('loaded');
-                });
-            }
-
-            // Debounce scroll events
-            let scrollTimeout;
-            $(window).on('scroll', function() {
-                if (scrollTimeout) {
-                    clearTimeout(scrollTimeout);
-                }
-                scrollTimeout = setTimeout(() => {
-                    $(document).trigger('scroll.debounced');
-                }, 16);
-            });
-        },
-
-        // Accessibility enhancements
-        accessibility: function() {
-            // Keyboard navigation for dropdowns
-            $('.dropdown-toggle').on('keydown', function(e) {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    $(this).click();
-                }
-            });
-
-            // Focus management for modals
-            $(document).on('keydown', function(e) {
-                if (e.key === 'Escape' && $('.modal').is(':visible')) {
-                    $('.modal-close').click();
-                }
-            });
-
-            // Skip links
-            $('.skip-link').on('click', function(e) {
-                const target = $($(this).attr('href'));
-                if (target.length) {
-                    target.focus();
-                }
-            });
-        },
-
-        // Animation utilities
-        animations: function() {
-            // Fade in elements on scroll
-            const animateElements = $('.animate-on-scroll');
-            
-            const animateOnScroll = new IntersectionObserver((entries) => {
+    /**
+     * Scroll Animations
+     */
+    function initScrollAnimations() {
+        if ('IntersectionObserver' in window) {
+            const animationObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        entry.target.classList.add('animated');
+                        entry.target.classList.add('animate');
                     }
                 });
             }, {
                 threshold: 0.1
             });
-            
-            animateElements.each(function() {
-                animateOnScroll.observe(this);
+
+            document.querySelectorAll('.fade-in-up, .fade-in, .slide-in-left, .slide-in-right').forEach(el => {
+                animationObserver.observe(el);
             });
-
-            // Stagger animations for product grids
-            $('.products .product').each(function(index) {
-                $(this).css('animation-delay', (index * 100) + 'ms');
-            });
-        },
-
-        // Notification system
-        showNotification: function(message, type = 'info') {
-            const notification = $(`
-                <div class="westpace-notification westpace-notification--${type}">
-                    <div class="notification-content">
-                        <span class="material-icons">${this.getNotificationIcon(type)}</span>
-                        <span class="notification-message">${message}</span>
-                        <button class="notification-close">
-                            <span class="material-icons">close</span>
-                        </button>
-                    </div>
-                </div>
-            `);
-            
-            $('body').append(notification);
-            
-            // Show notification
-            setTimeout(() => {
-                notification.addClass('show');
-            }, 100);
-            
-            // Auto hide after 5 seconds
-            setTimeout(() => {
-                this.hideNotification(notification);
-            }, 5000);
-            
-            // Close button handler
-            notification.on('click', '.notification-close', () => {
-                this.hideNotification(notification);
-            });
-        },
-
-        // Hide notification
-        hideNotification: function(notification) {
-            notification.removeClass('show');
-            setTimeout(() => {
-                notification.remove();
-            }, 300);
-        },
-
-        // Get notification icon
-        getNotificationIcon: function(type) {
-            const icons = {
-                success: 'check_circle',
-                error: 'error',
-                warning: 'warning',
-                info: 'info'
-            };
-            return icons[type] || icons.info;
         }
-    };
-
-    // Initialize theme when document is ready
-    $(document).ready(function() {
-        WestpaceTheme.init();
-    });
-
-    // Back to top button
-    $(window).on('scroll.debounced', function() {
-        if ($(this).scrollTop() > 300) {
-            $('.back-to-top').fadeIn();
-        } else {
-            $('.back-to-top').fadeOut();
-        }
-    });
-
-    $('.back-to-top').on('click', function(e) {
-        e.preventDefault();
-        $('html, body').animate({ scrollTop: 0 }, 800);
-    });
-
-    // Cookie consent (if needed)
-    if (!localStorage.getItem('cookie-consent')) {
-        const cookieBanner = $(`
-            <div class="cookie-consent">
-                <div class="cookie-content">
-                    <p>We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.</p>
-                    <button class="btn btn-primary accept-cookies">Accept</button>
-                </div>
-            </div>
-        `);
-        
-        $('body').append(cookieBanner);
-        
-        $('.accept-cookies').on('click', function() {
-            localStorage.setItem('cookie-consent', 'true');
-            cookieBanner.fadeOut();
-        });
     }
 
+    /**
+     * Utility Functions
+     */
+    function isValidEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+
+    function showMessage($container, message, type) {
+        $container.removeClass('success error info warning')
+                  .addClass(type)
+                  .html(message)
+                  .fadeIn();
+        
+        setTimeout(() => {
+            $container.fadeOut();
+        }, 5000);
+    }
+
+    /**
+     * Debounce function for performance
+     */
+    function debounce(func, wait, immediate) {
+        let timeout;
+        return function() {
+            const context = this;
+            const args = arguments;
+            const later = function() {
+                timeout = null;
+                if (!immediate) func.apply(context, args);
+            };
+            const callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) func.apply(context, args);
+        };
+    }
+
+    /**
+     * Throttle function for scroll events
+     */
+    function throttle(func, limit) {
+        let inThrottle;
+        return function() {
+            const args = arguments;
+            const context = this;
+            if (!inThrottle) {
+                func.apply(context, args);
+                inThrottle = true;
+                setTimeout(() => inThrottle = false, limit);
+            }
+        };
+    }
+
+    // Expose some functions globally if needed
+    window.westpaceTheme = {
+        showMessage: showMessage,
+        isValidEmail: isValidEmail,
+        debounce: debounce,
+        throttle: throttle
+    };
+
 })(jQuery);
+
+/**
+ * CSS for JavaScript-added elements
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    // Add necessary CSS for ripple effect and other JS enhancements
+    const style = document.createElement('style');
+    style.textContent = `
+        .btn {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+        
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+        
+        .form-control.is-valid {
+            border-color: var(--success-500);
+        }
+        
+        .form-control.is-invalid {
+            border-color: var(--error-500);
+        }
+        
+        .qty-btn {
+            background: var(--gray-200);
+            border: 1px solid var(--gray-300);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+        
+        .qty-btn:hover {
+            background: var(--gray-300);
+        }
+        
+        .qty-minus {
+            border-radius: var(--radius) 0 0 var(--radius);
+        }
+        
+        .qty-plus {
+            border-radius: 0 var(--radius) var(--radius) 0;
+        }
+        
+        .form-message {
+            padding: var(--space-3);
+            border-radius: var(--radius);
+            margin-top: var(--space-3);
+            display: none;
+        }
+        
+        .form-message.success {
+            background: var(--success-50);
+            color: var(--success-700);
+            border: 1px solid var(--success-200);
+        }
+        
+        .form-message.error {
+            background: var(--error-50);
+            color: var(--error-700);
+            border: 1px solid var(--error-200);
+        }
+        
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+        
+        .fade-in-up.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .lazy {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .lazy.loaded {
+            opacity: 1;
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+            .ripple,
+            .fade-in-up {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+});
