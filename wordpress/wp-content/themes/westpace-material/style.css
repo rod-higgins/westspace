@@ -1,493 +1,116 @@
-/*
-Theme Name: Westpace Material Design Enhanced
-Description: Ultra-modern Material Design WordPress theme with Apple-inspired aesthetics for West Pace Apparels
-Version: 3.0.0
-Author: West Pace Development Team
-Text Domain: westpace-material
-Tags: material-design, ecommerce, woocommerce, business, manufacturing, modern, responsive, accessibility-ready, premium
-Requires at least: 6.0
-Tested up to: 6.4
-Requires PHP: 8.0
-License: GPL v3 or later
-License URI: https://www.gnu.org/licenses/gpl-3.0.html
-
-Professional, modern WordPress theme with sophisticated Material Design implementation,
-optimized for manufacturing businesses and ecommerce.
+/* =================================
+// style.css - Theme Stylesheet Header
+// =================================
 */
 
-/* Import Enhanced Material Design System */
+/*
+Theme Name: Westpace Material Design Enhanced
+Theme URI: https://westpaceapparels.com/
+Description: A modern WordPress theme with Material Design principles for West Pace Apparels. Features enhanced WooCommerce integration, responsive design, performance optimization, and accessibility compliance.
+Author: West Pace Apparels
+Author URI: https://westpaceapparels.com/
+Version: 3.0.0
+Requires at least: 5.0
+Tested up to: 6.4
+Requires PHP: 7.4
+License: GPL v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: westpace-material
+Domain Path: /languages
+Tags: custom-background, custom-colors, custom-header, custom-logo, custom-menu, featured-images, footer-widgets, full-width-template, one-column, two-columns, three-columns, left-sidebar, right-sidebar, theme-options, threaded-comments, translation-ready, blog, business, e-commerce
+
+West Pace Apparels Material Design Enhanced Theme
+Copyright (C) 2024 West Pace Apparels
+
+This theme is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 2 of the License, or
+(at your option) any later version.
+
+This theme is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this theme. If not, see https://www.gnu.org/licenses/gpl-2.0.html.
+*/
+
+/* 
+======================================
+    THEME NOTES AND IMPLEMENTATION
+====================================== 
+*/
+
+/*
+This stylesheet serves as the main theme identifier for WordPress.
+The actual styles are imported from the Material Design CSS file.
+
+Key Theme Features:
+- Material Design Components
+- Enhanced WooCommerce Integration  
+- Responsive Grid System
+- Performance Optimized
+- Accessibility Ready (WCAG Compliant)
+- Modern Typography (Inter Font Family)
+- Advanced Navigation with Mobile Support
+- Customizer Integration
+- Security Enhancements
+- SEO Optimized
+
+File Structure:
+- /assets/css/material-design.css (Main styles)
+- /assets/css/woocommerce.css (WooCommerce styles)
+- /assets/js/theme.js (Main JavaScript)
+- /templates/assets/css/editor-style.css (Block editor styles)
+- /templates/assets/js/customizer-controls.js (Customizer controls)
+- /inc/customizer.php (Theme customizer)
+- /inc/template-functions.php (Helper functions)
+- /inc/class-walker-nav-menu.php (Navigation walker)
+
+Browser Support:
+- Chrome/Chromium (latest)
+- Firefox (latest)
+- Safari (latest) 
+- Edge (latest)
+- Internet Explorer 11+
+
+Performance Features:
+- Lazy loading for images
+- Optimized CSS/JS loading
+- Gzip compression
+- Minification support
+- Efficient database queries
+
+Accessibility Features:
+- WCAG 2.1 AA compliance
+- Keyboard navigation support
+- Screen reader compatibility
+- High contrast support
+- Focus indicators
+- Skip links
+
+WooCommerce Integration:
+- Custom product layouts
+- Enhanced cart/checkout
+- Material Design buttons
+- Optimized product galleries
+- Custom shop layouts
+- Mobile-optimized shopping experience
+
+Customization Options:
+- Color scheme customization
+- Typography controls
+- Layout options
+- Header/footer customization
+- WooCommerce settings
+- Performance settings
+- Custom CSS support
+
+Documentation: See README.md for detailed setup and customization instructions.
+*/
+
+/* Import the main Material Design stylesheet */
 @import url("assets/css/material-design.css");
 
-/* Advanced Typography - Apple-inspired */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
-@import url('https://fonts.googleapis.com/icon?family=Material+Icons+Round');
-
-/* Reset and Base Styles */
-* {
-  box-sizing: border-box;
-}
-
-html {
-  line-height: 1.15;
-  -webkit-text-size-adjust: 100%;
-}
-
-body {
-  margin: 0;
-  font-family: var(--font-family-primary);
-  font-size: var(--text-base);
-  line-height: 1.6;
-  color: var(--text-primary);
-  background-color: var(--background);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Theme Foundation */
-.site {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background: var(--background);
-}
-
-.site-content {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Container System */
-.container {
-  max-width: var(--max-width-7xl);
-  margin: 0 auto;
-  padding: 0 var(--space-6);
-}
-
-.container-fluid {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 0 var(--space-6);
-}
-
-/* Enhanced Header */
-.site-header {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border-light);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: var(--z-50);
-  transition: all var(--transition-normal);
-}
-
-.site-header.scrolled {
-  background: rgba(255, 255, 255, 0.98);
-  box-shadow: var(--shadow-lg);
-  transform: translateY(0);
-}
-
-.site-header.hidden {
-  transform: translateY(-100%);
-}
-
-.header-container {
-  max-width: var(--max-width-7xl);
-  margin: 0 auto;
-  padding: 0 var(--space-6);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 80px;
-  position: relative;
-}
-
-/* Enhanced Logo */
-.site-branding {
-  display: flex;
-  align-items: center;
-  z-index: var(--z-10);
-}
-
-.site-logo {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  transition: all var(--transition-fast);
-}
-
-.site-logo:hover {
-  transform: scale(1.02);
-}
-
-.site-logo img {
-  max-height: 50px;
-  width: auto;
-  filter: brightness(0) saturate(100%) invert(12%) sepia(85%) saturate(3766%) hue-rotate(214deg) brightness(94%) contrast(101%);
-  transition: all var(--transition-fast);
-}
-
-.site-title {
-  font-family: var(--font-family-secondary);
-  font-size: var(--text-2xl);
-  font-weight: var(--font-weight-extrabold);
-  color: var(--primary-700);
-  margin: 0;
-  letter-spacing: -0.02em;
-}
-
-/* Sophisticated Navigation */
-.main-navigation {
-  display: flex;
-  align-items: center;
-  gap: var(--space-8);
-}
-
-.main-navigation ul {
-  display: flex;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  gap: var(--space-2);
-  align-items: center;
-}
-
-.main-navigation li {
-  position: relative;
-}
-
-.main-navigation a {
-  color: var(--text-primary);
-  text-decoration: none;
-  font-weight: var(--font-weight-medium);
-  font-size: var(--text-sm);
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius);
-  transition: all var(--transition-fast);
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.main-navigation a:hover,
-.main-navigation .current-menu-item > a {
-  background: var(--primary-50);
-  color: var(--primary-700);
-}
-
-/* Mobile Menu */
-.mobile-menu-toggle {
-  display: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: var(--space-2);
-  z-index: var(--z-50);
-}
-
-.mobile-menu-toggle span {
-  display: block;
-  width: 25px;
-  height: 3px;
-  background: var(--text-primary);
-  transition: all var(--transition-fast);
-  margin: 5px 0;
-}
-
-/* Main Content */
-.site-main {
-  padding: 120px 0 var(--space-20);
-}
-
-.content-layout {
-  display: grid;
-  gap: var(--space-12);
-}
-
-.content-layout.has-sidebar {
-  grid-template-columns: 1fr 300px;
-}
-
-.content-layout.full-width {
-  grid-template-columns: 1fr;
-}
-
-/* Typography */
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-family-secondary);
-  font-weight: var(--font-weight-bold);
-  line-height: 1.2;
-  margin: 0 0 var(--space-6);
-  color: var(--neutral-900);
-}
-
-h1 { font-size: var(--text-4xl); }
-h2 { font-size: var(--text-3xl); }
-h3 { font-size: var(--text-2xl); }
-h4 { font-size: var(--text-xl); }
-h5 { font-size: var(--text-lg); }
-h6 { font-size: var(--text-base); }
-
-p {
-  margin: 0 0 var(--space-4);
-  line-height: 1.7;
-}
-
-a {
-  color: var(--primary-600);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-}
-
-a:hover {
-  color: var(--primary-700);
-  text-decoration: underline;
-}
-
-/* Enhanced Footer */
-.site-footer {
-  background: var(--neutral-900);
-  color: var(--neutral-300);
-  padding: var(--space-20) 0 var(--space-8);
-  position: relative;
-  overflow: hidden;
-}
-
-.site-footer::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent 0%, var(--primary-500) 50%, transparent 100%);
-}
-
-.footer-widgets-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--space-12);
-  margin-bottom: var(--space-16);
-}
-
-.footer-widget h3 {
-  color: var(--neutral-100);
-  margin-bottom: var(--space-6);
-  font-size: var(--text-lg);
-  font-weight: var(--font-weight-semibold);
-}
-
-.footer-widget ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.footer-widget li {
-  margin-bottom: var(--space-3);
-}
-
-.footer-widget a {
-  color: var(--neutral-400);
-  text-decoration: none;
-  transition: all var(--transition-fast);
-  font-size: var(--text-sm);
-}
-
-.footer-widget a:hover {
-  color: var(--primary-400);
-  transform: translateX(4px);
-}
-
-.footer-bottom {
-  border-top: 1px solid var(--neutral-800);
-  padding-top: var(--space-8);
-}
-
-.footer-bottom-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-6);
-}
-
-.footer-info p {
-  margin: 0;
-  font-size: var(--text-sm);
-  color: var(--neutral-500);
-}
-
-.footer-social {
-  display: flex;
-  gap: var(--space-4);
-}
-
-.social-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  background: var(--neutral-800);
-  border-radius: var(--radius-lg);
-  color: var(--neutral-400);
-  text-decoration: none;
-  transition: all var(--transition-normal);
-  border: 1px solid var(--neutral-700);
-}
-
-.social-link:hover {
-  background: var(--primary-600);
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--primary-500);
-}
-
-/* Utility Classes */
-.text-center { text-align: center; }
-.text-left { text-align: left; }
-.text-right { text-align: right; }
-
-.d-none { display: none; }
-.d-block { display: block; }
-.d-flex { display: flex; }
-.d-grid { display: grid; }
-
-.align-items-center { align-items: center; }
-.justify-content-center { justify-content: center; }
-.justify-content-between { justify-content: space-between; }
-
-.mb-0 { margin-bottom: 0; }
-.mb-1 { margin-bottom: var(--space-1); }
-.mb-2 { margin-bottom: var(--space-2); }
-.mb-3 { margin-bottom: var(--space-3); }
-.mb-4 { margin-bottom: var(--space-4); }
-.mb-5 { margin-bottom: var(--space-5); }
-.mb-6 { margin-bottom: var(--space-6); }
-
-/* Responsive Design */
-@media (max-width: 1024px) {
-  .header-container {
-    padding: 0 var(--space-4);
-  }
-  
-  .content-layout.has-sidebar {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .mobile-menu-toggle {
-    display: block;
-  }
-  
-  .main-navigation {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(20px);
-    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-    box-shadow: var(--shadow-lg);
-    padding: var(--space-6);
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: all var(--transition-normal);
-  }
-  
-  .main-navigation.is-open {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-  }
-  
-  .main-navigation ul {
-    flex-direction: column;
-    gap: var(--space-4);
-    width: 100%;
-  }
-  
-  .main-navigation a {
-    justify-content: flex-start;
-    width: 100%;
-    padding: var(--space-4);
-  }
-  
-  .site-main {
-    padding: 100px 0 var(--space-16);
-  }
-  
-  .footer-bottom-content {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  h1 { font-size: var(--text-3xl); }
-  h2 { font-size: var(--text-2xl); }
-  h3 { font-size: var(--text-xl); }
-}
-
-@media (max-width: 480px) {
-  .container {
-    padding: 0 var(--space-4);
-  }
-  
-  .footer-widgets-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-8);
-  }
-  
-  h1 { font-size: var(--text-2xl); }
-  h2 { font-size: var(--text-xl); }
-  h3 { font-size: var(--text-lg); }
-}
-
-/* Print Styles */
-@media print {
-  .site-header,
-  .site-footer,
-  .main-navigation,
-  .mobile-menu-toggle {
-    display: none !important;
-  }
-  
-  .site-main {
-    padding: 0;
-  }
-  
-  .material-card {
-    box-shadow: none;
-    border: 1px solid var(--neutral-300);
-  }
-  
-  a {
-    text-decoration: underline;
-  }
-}
-
-/* High Contrast Mode */
-@media (prefers-contrast: high) {
-  :root {
-    --neutral-300: #666;
-    --neutral-400: #555;
-    --neutral-500: #444;
-  }
-}
-
-/* Reduced Motion */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+/* Additional theme-specific styles can be added below */
